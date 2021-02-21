@@ -51,7 +51,6 @@ export default {
 			immediate: true,
 			deep: true,
 			handler(val) {
-				console.log(val)
 				this.form = val;
 			}
 		}
