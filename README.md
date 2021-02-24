@@ -33,4 +33,6 @@ yarn add cl-admin-crud
 
 ## Version
 
+-   1.0.7 解决 $crud.emit 失效问题
+-   1.0.6 cl-form 添加 provide.form
 -   1.0.0 初始化

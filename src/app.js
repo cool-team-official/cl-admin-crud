@@ -1,5 +1,5 @@
 import { deepMerge, isFunction } from "@/utils";
-import { __inst } from "@/global";
+import { __inst } from "@/store";
 
 export const bootstrap = (that) => {
 	// eslint-disable-next-line

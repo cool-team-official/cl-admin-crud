@@ -1,6 +1,6 @@
 import { deepMerge, isArray, isString, isObject, isFunction } from "@/utils";
 import { bootstrap } from "@/app";
-import { __inst, __crud } from "@/global";
+import { __inst, __crud } from "@/store";
 import { Emitter } from "@/mixins";
 
 require("@/static/index.scss");
@@ -79,8 +79,7 @@ export default {
 			},
 			fn: {
 				permission: null
-			},
-			events: {}
+			}
 		};
 	},
 
@@ -98,8 +97,8 @@ export default {
 		this.$emit("load", res);
 
 		// Register event
-		for (let i in this.events) {
-			let event = this.events[i];
+		for (let i in __crud.event) {
+			let event = __crud.event[i];
 			let mode = null;
 			let callback = null;
 

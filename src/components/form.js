@@ -2,7 +2,7 @@ import { deepMerge, isFunction, cloneDeep } from "@/utils";
 import { renderNode } from "@/utils/vnode";
 import Parse from "@/utils/parse";
 import { Form, Emitter, Screen } from "@/mixins";
-import { __inst } from "@/global";
+import { __inst } from "@/store";
 
 export default {
 	name: "cl-form",
@@ -15,6 +15,11 @@ export default {
 			default: () => {
 				return {};
 			}
+		}
+	},
+	provide() {
+		return {
+			form: this.form
 		}
 	},
 	data() {

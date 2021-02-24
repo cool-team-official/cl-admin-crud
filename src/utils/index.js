@@ -1,6 +1,6 @@
 import cloneDeep from "clone-deep";
 import flat from "array.prototype.flat";
-import { __inst } from "@/global";
+import { __inst } from "@/store";
 
 export function isArray(value) {
 	if (typeof Array.isArray === "function") {

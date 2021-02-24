@@ -1,5 +1,5 @@
 import { isFunction, isString, cloneDeep, isObject } from "./index";
-import { __inst, __vue } from "@/global";
+import { __inst, __vue } from "@/store";
 
 /**
  * Parse JSX, filter params

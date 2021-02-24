@@ -46,6 +46,11 @@ export default {
 			visible: false
 		};
 	},
+	provide() {
+		return {
+			form: this.form
+		}
+	},
 	watch: {
 		value: {
 			immediate: true,
