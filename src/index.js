@@ -73,6 +73,6 @@ export const CRUD = {
 };
 
 export default {
-	version: '1.0.6',
+	version: '1.0.8',
 	install
 };

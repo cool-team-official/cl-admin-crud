@@ -11,6 +11,7 @@
 		/>
 		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/element-ui/lib/index.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.4/dayjs.min.js"></script>
 		<script src="../dist/cl-admin-crud.min.js"></script>
 		<style>
 			html,
@@ -34,6 +35,7 @@
 					<cl-add-btn></cl-add-btn>
 					<cl-multi-delete-btn></cl-multi-delete-btn>
 					<cl-query
+						field="status"
 						:list="[
 							{
 								label: '启用',
@@ -49,33 +51,34 @@
 						<el-select
 							size="mini"
 							v-model="selects.status"
-							@change="val => {
-								refresh({
-									status: val, 
-									page: 1
-								})	
-							}"
+							@change="
+								(val) => {
+									refresh({
+										status: val,
+										page: 1
+									});
+								}
+							"
 						>
 							<el-option value="" label="全部"></el-option>
-							<el-option value="0" label="禁用"></el-option>
-							<el-option value="1" label="启用"></el-option>
+							<el-option :value="0" label="禁用"></el-option>
+							<el-option :value="1" label="启用"></el-option>
 						</el-select>
 					</cl-filter>
 					<el-button size="mini" @click="openForm">自定义测试表单</el-button>
-					<el-button size="mini" @click="openDialog">自定义对话框</el-button>
 					<cl-flex1></cl-flex1>
 					<cl-search-key
 						field="name"
 						:field-list="[
-                            {
-                                label: '姓名',
-                                value: 'name'
-                            },
-                            {
-                                label: '身份证',
-                                value: 'idCard'
-                            }
-                        ]"
+							{
+								label: '姓名',
+								value: 'name'
+							},
+							{
+								label: '身份证',
+								value: 'idCard'
+							}
+						]"
 					></cl-search-key>
 					<cl-adv-btn></cl-adv-btn>
 				</el-row>
@@ -93,18 +96,12 @@
 				</cl-adv-search>
 
 				<!-- 编辑、新增 -->
-				<cl-upsert
-					v-model="upsert.form"
-					ref="upsert"
-					v-bind="upsert.props"
-					v-on="upsert.on"
-				>
-				</cl-upsert>
+				<cl-upsert ref="upsert" v-bind="upsert.props" v-on="upsert.on"> </cl-upsert>
 
 				<!-- 自定义表单 -->
 				<cl-form ref="form">
 					<!-- 动态增减表单验证 -->
-					<template #slot-validate="{scope}">
+					<template #slot-validate="{ scope }">
 						<el-form-item
 							v-for="(item, index) in scope.vads"
 							:key="index"
@@ -117,14 +114,8 @@
 						<el-button @click="addVad(scope.vads)">添加行</el-button>
 					</template>
 
-					<!-- 测试设置表单值 -->
-					<template #slot-var="{ scope }">
-						<el-input v-model="scope._name"></el-input>
-						<el-button @click="setFormValue(scope)">设置</el-button>
-					</template>
-
 					<!-- 内嵌crud -->
-					<template #slot-crud="{scope}">
+					<template #slot-crud>
 						<cl-crud @load="onUpsertCrudLoad">
 							<cl-table
 								:props="{
@@ -137,12 +128,12 @@
 									},
 									{
 										label: '存款',
-										prop: 'price',
+										prop: 'price'
 									},
 									{
 										label: '创建时间',
 										prop: 'createTime'
-									},
+									}
 								]"
 							></cl-table>
 						</cl-crud>
@@ -154,110 +145,115 @@
 					title="自定义对话框"
 					:visible.sync="dialog.visible"
 					v-bind="dialog.props"
-					v-on="dialog.on"
 				>
-					<p>自定义对话框</p>
+					自定义对话框
 				</cl-dialog>
 			</cl-crud>
 		</div>
 
 		<script>
-			const userList = [
+			let id = 10;
+
+			const UserList = [
 				{
 					id: 1,
 					name: "刘一",
-					process: 42.2,
 					createTime: "2019年09月02日",
 					price: 75.99,
-					salesRate: 52.2,
-					status: 1,
-					images: [
-						"https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/1.jpg"
-					]
+					status: 1
 				},
 				{
 					id: 2,
 					name: "陈二",
-					process: 35.2,
 					createTime: "2019年09月05日",
 					price: 242.1,
-					salesRate: 72.1,
-					status: 1,
-					images: [
-						"https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/2.jpg"
-					]
+					status: 1
 				},
 				{
 					id: 3,
 					name: "张三",
-					process: 10.2,
 					createTime: "2019年09月12日",
 					price: 74.11,
-					salesRate: 23.9,
-					status: 0,
-					images: [
-						"https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/3.jpg"
-					]
+					status: 0
 				},
 				{
 					id: 4,
 					name: "李四",
-					process: 75.5,
 					createTime: "2019年09月13日",
 					price: 276.64,
-					salesRate: 47.2,
-					status: 0,
-					images: [
-						"https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/4.jpg"
-					]
+					status: 0
 				},
 				{
 					id: 5,
 					name: "王五",
-					process: 25.4,
 					createTime: "2019年09月18日",
 					price: 160.23,
-					salesRate: 28.3,
-					status: 1,
-					images: [
-						"https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/5.jpg"
-					]
+					status: 1
 				}
 			];
 
-			const testService = {
+			const TestService = {
 				page: (p) => {
 					console.log("GET[page]", p);
+					console.log(p);
+
+					let total = 0;
+
+					let list = UserList.filter((e, i) => {
+						if (p.name) {
+							return e.name.includes(p.name);
+						}
+
+						if (![undefined, null, ""].includes(p.status)) {
+							return e.status === p.status;
+						}
+
+						total++;
+
+						if (i >= (p.page - 1) * p.size && i < p.page * p.size) {
+							return true;
+						} else {
+							return false;
+						}
+					});
+
 					return Promise.resolve({
-						list: userList,
+						list,
 						pagination: {
 							page: p.page,
 							size: p.size,
-							total: 5
+							total
 						}
 					});
 				},
 				info: (d) => {
 					console.log("GET[info]", d);
 					return new Promise((resolve) => {
-						resolve({
-							id: 1,
-							name: d.id,
-							price: 100,
-							ids: "0,3,2"
-						});
+						resolve(UserList.find(e.id == d.id));
 					});
 				},
 				add: (d) => {
 					console.log("POST[add]", d);
+					UserList.push({
+						...d,
+						id: id++,
+						createTime: dayjs().format("YYYY年MM月DD日")
+					});
 					return Promise.resolve();
 				},
 				delete: (d) => {
 					console.log("POST[delete]", d);
+					let ids = d.ids.split(",");
+					ids.forEach((id) => {
+						const index = UserList.findIndex((e) => e.id == id);
+						UserList.splice(index, 1);
+					});
 					return Promise.resolve();
 				},
 				update: (d) => {
 					console.log("POST[update]", d);
+					let item = UserList.find((e) => e.id == d.id);
+					Object.assign(item, d);
 					return Promise.resolve();
 				}
 			};
@@ -312,7 +308,6 @@
 
 			new Vue({
 				el: "#app",
-
 				data() {
 					return {
 						selects: {
@@ -402,8 +397,8 @@
 						},
 						upsert: {
 							on: {
-								open(isEdit, data) {
-									console.log("cl-upsert 打开", isEdit, data.name);
+								open() {
+									console.log("cl-upsert 打开");
 								},
 
 								close() {
@@ -411,11 +406,6 @@
 								}
 							},
 							props: {
-								props: {
-									width: "1000px",
-									"label-position": "top"
-								},
-
 								onOpen: (isEdit, data, { done, submit, close }) => {
 									console.log("cl-upsert 打开钩子", isEdit, data);
 								},
@@ -437,62 +427,50 @@
 
 								items: [
 									{
-										label: "昵称",
+										label: "姓名",
 										prop: "name",
 										component: {
 											name: "el-input"
+										},
+										rules: {
+											required: true,
+											message: "姓名不能为空"
 										}
 									},
 									{
-										label: "年龄",
-										prop: "age",
+										label: "存款",
+										prop: "price",
+										value: 0,
 										component: {
 											name: "el-input-number"
+										},
+										rules: {
+											required: true,
+											message: "存款不能为空",
+											validator: (rule, value) => {
+												console.log(value);
+											}
 										}
 									},
 									{
-										label: "测试绑定值相应",
-										prop: "val",
+										label: "状态",
+										prop: "status",
+										value: 1,
 										component: {
-											name: "cl-test",
-											updates: ["name", "age"]
+											name: "el-radio-group",
+											options: [
+												{
+													label: "启用",
+													value: 1
+												},
+												{
+													label: "禁用",
+													value: 0
+												}
+											]
 										}
 									}
-								],
-
-								op: {
-									layout: [
-										"close",
-										"save",
-										({ h }) => {
-											return h(
-												"el-button",
-												{
-													props: {
-														size: "small"
-													},
-													on: {
-														click: () => {
-															// this.$refs["upsert"].setForm(
-															// 	"name",
-															// 	"神仙都没用"
-															// );
-															this.upsert.form.name = "神仙都没用";
-														}
-													}
-												},
-												"设置名称"
-											);
-										}
-									]
-								},
-
-								hdr: {
-									opList: ["fullscreen", "close"]
-								}
-							},
-							form: {
-								name: "xxxx"
+								]
 							}
 						},
 						advSearch: {
@@ -526,27 +504,30 @@
 								opList: ["search", "reset", "clear", "close"],
 								items: [
 									{
-										label: "金额",
-										prop: "price",
-										value: 100,
+										label: "昵称",
+										prop: "name",
 										component: {
-											name: "el-input-number",
-											props: {
-												min: 1,
-												max: 1000000
+											name: "el-input",
+											attrs: {
+												placeholder: "搜索昵称"
 											}
 										}
 									},
 									{
-										label: "销售率",
-										prop: "salesRate",
+										label: "状态",
+										prop: "status",
 										component: {
-											name: "el-input-number",
-											props: {
-												precision: 2,
-												min: 0,
-												max: 100
-											}
+											name: "el-radio-group",
+											options: [
+												{
+													label: "启用",
+													value: 1
+												},
+												{
+													label: "禁用",
+													value: 0
+												}
+											]
 										}
 									}
 								]
@@ -555,30 +536,7 @@
 						dialog: {
 							visible: false,
 							props: {
-								title: "自定义对话框",
-								props: {
-									"before-close"(done) {
-										console.log("dialog before-close");
-
-										setTimeout(() => {
-											done();
-										}, 300);
-									}
-								}
-							},
-							on: {
-								open() {
-									console.log("dialog open");
-								},
-								closed() {
-									console.log("dialog closed");
-								},
-								opened() {
-									console.log("dialog opened");
-								},
-								close() {
-									console.log("dialog close");
-								}
+								title: "自定义对话框"
 							}
 						}
 					};
@@ -586,80 +544,16 @@
 
 				methods: {
 					openForm() {
-						const { open, setForm } = this.$refs["form"];
-
-						const rd = Math.random();
-
-						open({
+						this.$refs["form"].open({
 							props: {
 								title: "自定义表单",
 								"label-width": "150px",
 								width: "1000px"
 							},
 							form: {
-								qs: [1],
-								_name: "羊姜" + rd
+								qs: [1]
 							},
 							items: [
-								{
-									props: {
-										"label-width": "0px"
-									},
-									component: ({ h }) => {
-										return h(
-											"el-divider",
-											{
-												props: {
-													"content-position": "left"
-												}
-											},
-											"测试设置表单值"
-										);
-									}
-								},
-								{
-									component: {
-										name: "slot-var"
-									}
-								},
-								{
-									props: {
-										"label-width": "0px"
-									},
-									component: ({ h }) => {
-										return h(
-											"el-divider",
-											{
-												props: {
-													"content-position": "left"
-												}
-											},
-											"测试验证el-select 清空表单"
-										);
-									}
-								},
-								{
-									label: "类型",
-									prop: "type",
-									component: {
-										name: "el-select",
-										on: {
-											change: (v) => {
-												setForm("name", v);
-											}
-										},
-										options: [
-											{
-												label: "羊姜",
-												value: "羊姜"
-											},
-											{
-												label: "神仙都没用",
-												value: "神仙都没用"
-											}
-										]
-									}
-								},
 								{
 									props: {
 										"label-width": "0px"
@@ -870,37 +764,29 @@
 								}
 							],
 							on: {
-								open: (data, { close, submit, done }) => {
-									console.log("cl-form open", data);
+								open(data, { close, submit, done }) {
+									console.log("cl-form 打开钩子", data);
 								},
 
 								close(done) {
+									console.log("cl-form 关闭钩子");
 									done();
-									console.log("cl-form close");
 								},
 
 								submit: (data, { close, done, next }) => {
-									console.log("cl-form submit", data);
+									console.log("cl-form 提交钩子", data);
 
 									setTimeout(() => {
+										done();
 										this.$message.success("提交成功");
-										close();
 									}, 1500);
 								}
 							}
 						});
 					},
 
-					openDialog() {
-						this.dialog.visible = true;
-					},
-
-					setFormValue(scope) {
-						this.$refs["form"].setForm("_name", "神仙");
-					},
-
 					onLoad({ ctx, app }) {
-						ctx.service(testService)
+						ctx.service(TestService)
 							.permission(() => {
 								return {
 									add: true,
@@ -918,7 +804,7 @@
 					},
 
 					onUpsertCrudLoad({ ctx, app }) {
-						ctx.service(testService).done();
+						ctx.service(TestService).done();
 						app.refresh();
 					},
 

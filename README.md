@@ -17,7 +17,7 @@ yarn add cl-admin-crud
 #### Browser
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/cl-admin-crud@1.0.4/dist/cl-admin-crud.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/cl-admin-crud@1.0.8/dist/cl-admin-crud.min.js"></script>
 ```
 
 ## Demo

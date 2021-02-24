@@ -126,14 +126,17 @@ export default {
 			this.done();
 		},
 
+		onClosed() {
+			for (let i in this.form) {
+				delete this.form[i]
+			}
+		},
+
 		done() {
 			this.saving = false;
 		},
 
 		clear() {
-			for (let i in this.form) {
-				delete this.form[i]
-			}
 			this.clearForm()
 		},
 
@@ -366,7 +369,8 @@ export default {
 						},
 						on: {
 							'update:visible': (v) => (this.visible = v),
-							"update:props:fullscreen": (v) => (props.fullscreen = v)
+							"update:props:fullscreen": (v) => (props.fullscreen = v),
+							'closed': this.onClosed
 						}
 					}}>
 					<div class="cl-form__container">{this.formRender()}</div>
