@@ -1,5 +1,5 @@
 import { renderNode } from "@/utils/vnode";
-import { isNull } from "@/utils";
+import { isNull, isEmpty } from "@/utils";
 import { Emitter } from "@/mixins";
 
 export default {
@@ -24,6 +24,11 @@ export default {
 			default: () => {
 				return {};
 			}
+		},
+		// Auto calc max height
+		autoHeight: {
+			type: Boolean,
+			default: true
 		}
 	},
 	data() {
@@ -37,19 +42,19 @@ export default {
 		// Get default sort
 		const { order, prop } = this.props["default-sort"] || {};
 
-		// Set request params
-		this.crud.params.order = !order ? "" : order === "descending" ? "desc" : "asc";
-		this.crud.params.prop = prop;
+		if (order && prop) {
+			this.crud.params.order = order === "descending" ? "desc" : "asc";
+			this.crud.params.prop = prop;
+		}
 
 		// Crud event
-		this.$on("crud.resize", () => {
+		this.$on("resize", () => {
 			this.calcMaxHeight();
 		});
 
 		// Crud refresh
 		this.$on("crud.refresh", ({ list }) => {
 			this.data = list;
-
 		});
 	},
 	mounted() {
@@ -179,8 +184,8 @@ export default {
 			}
 
 			const render = (scope) => {
-				// Use op layout
-				return (item.layout || ["edit", "delete"]).map((vnode) => {
+				// Use op button list
+				return (item.buttons || ["edit", "delete"]).map((vnode) => {
 					if (["edit", "update", "delete"].includes(vnode)) {
 						// Get permission
 						const perm = getPermission(vnode);
@@ -361,7 +366,7 @@ export default {
 		},
 
 		bindMethods() {
-			[
+			const list = [
 				"clearSelection",
 				"toggleRowSelection",
 				"toggleAllSelection",
@@ -371,12 +376,18 @@ export default {
 				"clearFilter",
 				"doLayout",
 				"sort"
-			].forEach(e => {
-				this[e] = this.$refs["table"][e];
+			]
+
+			list.forEach(n => {
+				this[n] = this.$refs["table"][n];
 			});
 		},
 
 		calcMaxHeight() {
+			if (!this.autoHeight) {
+				return false
+			}
+
 			return this.$nextTick(() => {
 				const el = this.crud.$el.parentNode;
 				let { height = "" } = this.props || {};
@@ -400,7 +411,7 @@ export default {
 						}
 
 						if (f) {
-							h += rows[i].clientHeight + 10;
+							h += rows[i].clientHeight + 5;
 						}
 					}
 

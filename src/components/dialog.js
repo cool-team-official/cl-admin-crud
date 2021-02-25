@@ -11,27 +11,40 @@ export default {
 			type: String,
 			default: "对话框"
 		},
+		width: {
+			type: String,
+			default: '50%'
+		},
 		drag: {
 			type: Boolean,
 			default: true
 		},
+		// el-dialog attributes
 		props: {
 			type: Object,
 			default: () => {
 				return {};
 			}
 		},
+		// el-dialog event
 		on: {
 			type: Object,
 			default: () => {
 				return {};
 			}
 		},
-		opList: {
+		controls: {
 			type: Array,
 			default: () => ["fullscreen", "close"]
 		},
-		hiddenOp: Boolean
+		hiddenControls: {
+			type: Boolean,
+			default: false
+		},
+		hiddenHeader: {
+			type: Boolean,
+			default: false
+		}
 	},
 	mixins: [Screen],
 	data() {
@@ -240,7 +253,7 @@ export default {
 
 		// Header
 		headerRender() {
-			return this.hiddenOp ? null : (
+			return this.hiddenHeader ? null : (
 				<div
 					class="cl-dialog__header"
 					{...{
@@ -250,11 +263,11 @@ export default {
 							}
 						}
 					}}>
-					{/* title */}
+					{/* Title */}
 					<span class="cl-dialog__title">{this.title}</span>
-					{/* op button */}
-					<div class="cl-dialog__headerbtn">
-						{this.opList.map((vnode) => {
+					{/* Controls */}
+					<div class="cl-dialog__controls">
+						{this.hiddenControls ? null : this.controls.map((vnode) => {
 							// Fullscreen
 							if (vnode === "fullscreen") {
 								// Hidden fullscreen btn
@@ -265,13 +278,13 @@ export default {
 								// Show diff icon
 								if (this.props.fullscreen) {
 									return (
-										<button type="button" class="minimize" on-click={this.changeFullscreen}>
+										<button type="button" class="minimize" on-click={() => { this.changeFullscreen(false) }}>
 											<i class="el-icon-minus" />
 										</button>
 									)
 								} else {
 									return (
-										<button type="button" class="maximize" on-click={this.changeFullscreen}>
+										<button type="button" class="maximize" on-click={() => { this.changeFullscreen(true) }}>
 											<i class="el-icon-full-screen" />
 										</button>
 									)
@@ -301,13 +314,14 @@ export default {
 	render() {
 		return (
 			<el-dialog
-				custom-class={`cl-dialog ${this.hiddenOp ? "hidden-header" : ""}`}
 				{...{
 					props: {
+						width: this.width,
 						...this.props,
 						fullscreen: this.isFullscreen ? true : this.props.fullscreen,
 						visible: this.visible,
-						"show-close": false
+						"show-close": false,
+						'custom-class': `cl-dialog ${this.props.customClass || ''}`
 					},
 					on: {
 						open: this.open,
@@ -316,13 +330,13 @@ export default {
 						closed: this.onClosed
 					}
 				}}>
-				{/* header */}
+				{/* Header */}
 				<template slot="title">{this.headerRender()}</template>
-				{/* container */}
+				{/* Container */}
 				<div class="cl-dialog__container" key={this.cacheKey}>
 					{this.$slots.default}
 				</div>
-				{/* footer */}
+				{/* Footer */}
 				<div class="cl-dialog__footer" slot="footer">
 					{this.$slots.footer}
 				</div>

@@ -11,6 +11,7 @@ export default {
 
 	props: {
 		name: String,
+		border: Boolean,
 		onDelete: Function,
 		onRefresh: Function
 	},
@@ -96,32 +97,8 @@ export default {
 		// Loaded
 		this.$emit("load", res);
 
-		// Register event
-		for (let i in __crud.event) {
-			let event = __crud.event[i];
-			let mode = null;
-			let callback = null;
-
-			if (isObject(event)) {
-				mode = event.mode;
-				callback = event.callback;
-			} else {
-				mode = "on";
-				callback = event;
-			}
-
-			if (!["on", "once"].includes(mode)) {
-				return console.error(`Event[${i}].mode must be (on / once)`);
-			}
-
-			if (!isFunction(callback)) {
-				return console.error(`Event[${i}].callback is not a function`);
-			}
-
-			__inst[`$${mode}`](i, (data) => {
-				callback(data, res);
-			});
-		}
+		// Bind event
+		this.bindEvent(res)
 
 		// Window onresize
 		window.removeEventListener("resize", function () { });
@@ -139,6 +116,40 @@ export default {
 					return this.permission["update"];
 				default:
 					return this.permission[key];
+			}
+		},
+
+		// Get params
+		getParams() {
+			return this.params
+		},
+
+		// Bind event
+		bindEvent(res) {
+			for (let i in __crud.event) {
+				let event = __crud.event[i];
+				let mode = null;
+				let callback = null;
+
+				if (isObject(event)) {
+					mode = event.mode;
+					callback = event.callback;
+				} else {
+					mode = "on";
+					callback = event;
+				}
+
+				if (!["on", "once"].includes(mode)) {
+					return console.error(i, `mode must be (on / once)`);
+				}
+
+				if (!isFunction(callback)) {
+					return console.error(i, `callback is not a function`);
+				}
+
+				__inst[`$${mode}`](i, (data) => {
+					callback(data, res);
+				});
 			}
 		},
 
@@ -168,7 +179,7 @@ export default {
 			const reqName = this.dict.api.delete;
 
 			let params = {
-				ids: selection.map((e) => e.id).join(",")
+				ids: selection.map((e) => e.id)
 			};
 
 			// Delete
@@ -302,7 +313,6 @@ export default {
 							resolve(res);
 						})
 						.catch((err) => {
-							console.error(err);
 							this.$message.error(err);
 							reject(err);
 						})
@@ -322,7 +332,7 @@ export default {
 
 		// Layout again
 		doLayout() {
-			this.broadcast("ClTable", "resize");
+			this.broadcast("cl-table", "resize");
 		},
 
 		done() {
@@ -332,6 +342,6 @@ export default {
 	},
 
 	render() {
-		return <div class="cl-crud">{this.$slots.default}</div>;
+		return <div class={['cl-crud', { 'is-border': this.border }]}>{this.$slots.default}</div>;
 	}
 };

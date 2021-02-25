@@ -4,8 +4,8 @@ import { __inst } from "@/store";
 export default {
 	name: "cl-upsert",
 	componentName: "ClUpsert",
-	inject: ["crud"],
 	mixins: [Emitter],
+	inject: ["crud"],
 	props: {
 		// Bind value
 		value: {
@@ -25,21 +25,10 @@ export default {
 		},
 		// Edit sync
 		sync: Boolean,
-		// Hidden operation button
-		hiddenOp: Boolean,
 		// Op buttons
-		opList: {
-			type: Array,
-			default: () => ["close", "save"]
-		},
-		// Op object
 		op: Object,
 		// Dialog header object
-		hdr: Object,
-		// Save button text
-		saveButtonText: String,
-		// Close button text
-		closeButtonText: String,
+		dialog: Object,
 		// Hook by open { isEdit, data, { submit, done, close } }
 		onOpen: Function,
 		// Hook by close { action, done }
@@ -71,7 +60,7 @@ export default {
 		this.$on("crud.close", this.close);
 	},
 	mounted() {
-		this.inject();
+		this.extendApi();
 	},
 	methods: {
 		// Add
@@ -187,20 +176,9 @@ export default {
 
 			return new Promise((resolve) => {
 				this.$refs["form"].open({
-					items: this.items,
+					title: this.isEdit ? "编辑" : "新增",
 					props: {
-						title: this.isEdit ? "编辑" : "新增",
 						...this.props
-					},
-					op: {
-						hidden: this.hiddenOp,
-						layout: this.opList,
-						saveButtonText: this.saveButtonText || saveButtonText,
-						closeButtonText: this.closeButtonText || closeButtonText,
-						...this.op
-					},
-					hdr: {
-						...this.hdr
 					},
 					on: {
 						open: (data, { done, close }) => {
@@ -219,9 +197,16 @@ export default {
 						submit: this.submit,
 						close: this.beforeClose
 					},
+					op: {
+						saveButtonText,
+						closeButtonText,
+						...this.op
+					},
+					dialog: this.dialog,
+					items: this.items,
 					_data: {
 						isEdit: this.isEdit
-					}
+					},
 				});
 			});
 		},
@@ -243,7 +228,7 @@ export default {
 
 		/**
 		 * Submit form
-		 * @param {*} data
+		 * @param {object} data
 		 */
 		submit(data, { done }) {
 			// Get Service and Dict
@@ -300,9 +285,9 @@ export default {
 			}
 		},
 
-		// Inject form api
-		inject() {
-			const fns = [
+		// Extends form api
+		extendApi() {
+			const list = [
 				"getForm",
 				"setForm",
 				"clearForm",
@@ -315,8 +300,8 @@ export default {
 				"hiddenLoading"
 			];
 
-			fns.forEach((e) => {
-				this[e] = this.$refs["form"][e];
+			list.forEach((n) => {
+				this[n] = this.$refs["form"][n];
 			});
 		}
 	},

@@ -1,4 +1,4 @@
-import { deepMerge, isFunction, cloneDeep } from "@/utils";
+import { deepMerge, isFunction, isEmpty, cloneDeep } from "@/utils";
 import { renderNode } from "@/utils/vnode";
 import Parse from "@/utils/parse";
 import { Form, Emitter, Screen } from "@/mixins";
@@ -29,25 +29,31 @@ export default {
 			loading: false,
 			form: {},
 			conf: {
+				title: '自定义表单',
+				width: '50%',
+				props: {
+					size: "small",
+					"label-width": "100px",
+				},
 				on: {
 					open: null,
 					submit: null,
 					close: null
 				},
-				props: {
-					fullscreen: false,
-					"close-on-click-modal": false,
-					"append-to-body": true,
-				},
 				op: {
 					hidden: false,
 					saveButtonText: "保存",
 					closeButtonText: "取消",
-					layout: ["close", "save"]
+					buttons: ["close", "save"],
 				},
-				hdr: {
-					hidden: false,
-					opList: ["fullscreen", "close"]
+				dialog: {
+					props: {
+						fullscreen: false,
+						"close-on-click-modal": false,
+						"append-to-body": true,
+					},
+					hiddenControls: false,
+					controls: ["fullscreen", "close"]
 				},
 				items: [],
 				_data: {}
@@ -73,10 +79,17 @@ export default {
 		open(options = {}) {
 			// Merge conf
 			for (let i in this.conf) {
-				if (i == "items") {
-					this.conf.items = cloneDeep(options.items || []);
-				} else {
-					deepMerge(this.conf[i], options[i]);
+				switch (i) {
+					case 'items':
+						this.conf.items = cloneDeep(options.items || []);
+						break
+					case 'title':
+					case 'width':
+						this.conf[i] = options[i]
+						break;
+					default:
+						deepMerge(this.conf[i], options[i]);
+						break;
 				}
 			}
 
@@ -169,7 +182,7 @@ export default {
 							$refs
 						});
 					} else {
-						console.error("on[submit] is not found");
+						console.error("Submit is not found");
 					}
 				}
 			});
@@ -198,8 +211,6 @@ export default {
 					class="cl-form"
 					{...{
 						props: {
-							size: "small",
-							"label-width": "100px",
 							"label-position": this.isFullscreen ? "top" : "",
 							disabled: this.saving,
 							model: this.form,
@@ -214,11 +225,6 @@ export default {
 								scope: this.form,
 								data: this.conf._data
 							});
-
-							// Is flex
-							if (e.flex === undefined) {
-								e.flex = true;
-							}
 
 							return (
 								!e._hidden && (
@@ -262,7 +268,7 @@ export default {
 																		class={[
 																			`cl-form-item__${name}`,
 																			{
-																				"is-flex": e.flex
+																				"is-flex": isEmpty(e.flex) ? true : e.flex
 																			}
 																		]}
 																		v-show={!e.collapse}>
@@ -303,73 +309,78 @@ export default {
 		},
 
 		footerRender() {
-			const { hidden, layout, saveButtonText, closeButtonText } = this.conf.op;
+			const { hidden, buttons, saveButtonText, closeButtonText } = this.conf.op;
 			const { size = "small" } = this.conf.props;
 
 			return (
-				!hidden &&
-				layout.map((vnode) => {
-					if (vnode == "save") {
-						return (
-							<el-button
-								{...{
-									props: {
-										size,
-										type: "success",
-										disabled: this.loading,
-										loading: this.saving
-									},
-									on: {
-										click: this.submit
-									}
-								}}>
-								{saveButtonText}
-							</el-button>
-						);
-					} else if (vnode == "close") {
-						return (
-							<el-button
-								{...{
-									props: {
-										size
-									},
-									on: {
-										click: this.beforeClose
-									}
-								}}>
-								{closeButtonText}
-							</el-button>
-						);
-					} else {
-						return renderNode(vnode, {
-							scope: this.form,
-							$scopedSlots: this.$scopedSlots
-						});
-					}
-				})
+				hidden ? null :
+					buttons.map((vnode) => {
+						if (vnode == "save") {
+							return (
+								<el-button
+									{...{
+										props: {
+											size,
+											type: "success",
+											disabled: this.loading,
+											loading: this.saving
+										},
+										on: {
+											click: () => {
+												this.submit()
+											}
+										}
+									}}>
+									{saveButtonText}
+								</el-button>
+							);
+						} else if (vnode == "close") {
+							return (
+								<el-button
+									{...{
+										props: {
+											size
+										},
+										on: {
+											click: () => {
+												this.beforeClose()
+											}
+										}
+									}}>
+									{closeButtonText}
+								</el-button>
+							);
+						} else {
+							return renderNode(vnode, {
+								scope: this.form,
+								$scopedSlots: this.$scopedSlots
+							});
+						}
+					})
 			);
 		}
 	},
 
 	render() {
-		const { props, hdr } = this.conf;
+		const { title, width, dialog } = this.conf;
 
 		return (
 			<div class="cl-form">
 				<cl-dialog
+					title={title}
+					width={width}
 					visible={this.visible}
 					{...{
 						props: {
-							title: props.title,
-							opList: hdr.opList,
+							...dialog,
 							props: {
-								...props,
+								...dialog.props,
 								'before-close': this.beforeClose
 							}
 						},
 						on: {
 							'update:visible': (v) => (this.visible = v),
-							"update:props:fullscreen": (v) => (props.fullscreen = v),
+							"update:props:fullscreen": (v) => (dialog.props.fullscreen = v),
 							'closed': this.onClosed
 						}
 					}}>

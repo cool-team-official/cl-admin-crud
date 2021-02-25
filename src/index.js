@@ -37,8 +37,8 @@ const components = [
 	ErrorMessage
 ]
 
-const install = function (Vue, options) {
-	const { crud } = options || {};
+const install = function (Vue, options = {}) {
+	const { crud = {} } = options;
 
 	// 设置缓存数据
 	store.__crud = crud;
@@ -73,6 +73,6 @@ export const CRUD = {
 };
 
 export default {
-	version: '1.0.8',
+	version: '1.1.5',
 	install
 };

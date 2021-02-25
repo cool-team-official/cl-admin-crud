@@ -141,11 +141,7 @@
 				</cl-form>
 
 				<!-- 自定义对话框 -->
-				<cl-dialog
-					title="自定义对话框"
-					:visible.sync="dialog.visible"
-					v-bind="dialog.props"
-				>
+				<cl-dialog title="自定义对话框" :visible.sync="dialog.visible">
 					自定义对话框
 				</cl-dialog>
 			</cl-crud>
@@ -243,8 +239,7 @@
 				},
 				delete: (d) => {
 					console.log("POST[delete]", d);
-					let ids = d.ids.split(",");
-					ids.forEach((id) => {
+					(d.ids || []).forEach((id) => {
 						const index = UserList.findIndex((e) => e.id == id);
 						UserList.splice(index, 1);
 					});
@@ -258,26 +253,7 @@
 				}
 			};
 
-			Vue.use(CRUD, {
-				crud: {
-					event: {
-						refresh: (data, { app }) => {
-							app.refresh(data);
-						}
-					},
-					dict: {
-						label: {
-							add: "添加",
-							update: "更新",
-							delete: "移除",
-							multiDelete: "批量移除",
-							advSearch: "过滤",
-							saveButtonText: "确认"
-							// closeButtonText: "取消"
-						}
-					}
-				}
-			});
+			Vue.use(CRUD);
 
 			Vue.component("cl-test", {
 				data() {
@@ -368,7 +344,7 @@
 										label: "操作",
 										type: "op",
 										align: "center",
-										layout: [
+										buttons: [
 											"edit",
 											"delete",
 											({ h }) => {
@@ -425,6 +401,17 @@
 									next(data);
 								},
 
+								dialog: {
+									props: {
+										fullscreen: false
+									},
+									hiddenControls: false
+								},
+
+								op: {
+									hidden: false
+								},
+
 								items: [
 									{
 										label: "姓名",
@@ -444,12 +431,12 @@
 										component: {
 											name: "el-input-number"
 										},
+										append: ({ h }) => {
+											return h("p", "元");
+										},
 										rules: {
 											required: true,
-											message: "存款不能为空",
-											validator: (rule, value) => {
-												console.log(value);
-											}
+											message: "存款不能为空"
 										}
 									},
 									{
@@ -534,10 +521,7 @@
 							}
 						},
 						dialog: {
-							visible: false,
-							props: {
-								title: "自定义对话框"
-							}
+							visible: false
 						}
 					};
 				},
@@ -545,10 +529,39 @@
 				methods: {
 					openForm() {
 						this.$refs["form"].open({
+							title: "自定义测试表单",
+							width: "1000px",
 							props: {
-								title: "自定义表单",
-								"label-width": "150px",
-								width: "1000px"
+								"label-width": "150px"
+							},
+							on: {
+								open(data, { close, submit, done }) {
+									console.log("cl-form 打开钩子", data);
+								},
+
+								close(done) {
+									console.log("cl-form 关闭钩子");
+									done();
+								},
+
+								submit: (data, { close, done, next }) => {
+									console.log("cl-form 提交钩子", data);
+
+									setTimeout(() => {
+										done();
+										this.$message.success("提交成功");
+									}, 1500);
+								}
+							},
+							dialog: {
+								props: {
+									fullscreen: false
+								},
+								hiddenControls: false,
+								hiddenHeader: false
+							},
+							buttons: {
+								hidden: false
 							},
 							form: {
 								qs: [1]
@@ -762,26 +775,7 @@
 										);
 									}
 								}
-							],
-							on: {
-								open(data, { close, submit, done }) {
-									console.log("cl-form 打开钩子", data);
-								},
-
-								close(done) {
-									console.log("cl-form 关闭钩子");
-									done();
-								},
-
-								submit: (data, { close, done, next }) => {
-									console.log("cl-form 提交钩子", data);
-
-									setTimeout(() => {
-										done();
-										this.$message.success("提交成功");
-									}, 1500);
-								}
-							}
+							]
 						});
 					},
 
