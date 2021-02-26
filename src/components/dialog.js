@@ -252,7 +252,7 @@ export default {
 		},
 
 		// Header
-		headerRender() {
+		renderHeader() {
 			return this.hiddenHeader ? null : (
 				<div
 					class="cl-dialog__header"
@@ -331,15 +331,18 @@ export default {
 					}
 				}}>
 				{/* Header */}
-				<template slot="title">{this.headerRender()}</template>
+				<template slot="title">{this.renderHeader()}</template>
 				{/* Container */}
 				<div class="cl-dialog__container" key={this.cacheKey}>
 					{this.$slots.default}
 				</div>
 				{/* Footer */}
-				<div class="cl-dialog__footer" slot="footer">
-					{this.$slots.footer}
-				</div>
+				{
+					this.$slots.footer &&
+					<div class="cl-dialog__footer" slot="footer">
+						{this.$slots.footer}
+					</div>
+				}
 			</el-dialog>
 		);
 	}

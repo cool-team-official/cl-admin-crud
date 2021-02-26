@@ -42,6 +42,11 @@ export default {
 				add: true,
 				delete: true
 			},
+			params: {
+				page: 1,
+				size: 20
+			},
+			// Config data
 			dict: {
 				api: {
 					list: "list",
@@ -74,9 +79,8 @@ export default {
 					closeButtonText: "关闭"
 				}
 			},
-			params: {
-				page: 1,
-				size: 20
+			table: {
+				'context-menu': true
 			},
 			fn: {
 				permission: null
@@ -140,11 +144,11 @@ export default {
 				}
 
 				if (!["on", "once"].includes(mode)) {
-					return console.error(i, `mode must be (on / once)`);
+					return console.error(i, 'mode must be (on / once)');
 				}
 
 				if (!isFunction(callback)) {
-					return console.error(i, `callback is not a function`);
+					return console.error(i, 'callback is not a function');
 				}
 
 				__inst[`$${mode}`](i, (data) => {

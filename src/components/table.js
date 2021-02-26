@@ -1,6 +1,7 @@
 import { renderNode } from "@/utils/vnode";
-import { isNull, isEmpty } from "@/utils";
+import { isNull, isArray, isEmpty } from "@/utils";
 import { Emitter } from "@/mixins";
+import { isFunction } from "../utils";
 
 export default {
 	name: "cl-table",
@@ -29,7 +30,9 @@ export default {
 		autoHeight: {
 			type: Boolean,
 			default: true
-		}
+		},
+		// Enable context-menu
+		contextMenu: [Boolean, Array]
 	},
 	data() {
 		return {
@@ -58,13 +61,13 @@ export default {
 		});
 	},
 	mounted() {
-		this.emptyRender();
+		this.renderEmpty();
 		this.calcMaxHeight();
 		this.bindEmit();
 		this.bindMethods()
 	},
 	methods: {
-		columnRender() {
+		renderColumn() {
 			return this.columns
 				.filter((e) => !e.hidden)
 				.map((item, index) => {
@@ -76,7 +79,7 @@ export default {
 
 						// If op
 						if (item.type === "op") {
-							return this.opRender(item);
+							return this.renderOp(item);
 						}
 
 						// Default
@@ -176,7 +179,7 @@ export default {
 				});
 		},
 
-		opRender(item) {
+		renderOp(item) {
 			const { rowEdit, rowDelete, getPermission } = this.crud;
 
 			if (!item) {
@@ -282,7 +285,7 @@ export default {
 			);
 		},
 
-		emptyRender() {
+		renderEmpty() {
 			const empty = this.$scopedSlots["table-empty"];
 			const scope = {
 				h: this.$createElement,
@@ -296,7 +299,7 @@ export default {
 			}
 		},
 
-		appendRender() {
+		renderAppend() {
 			return this.$slots["append"];
 		},
 
@@ -312,7 +315,7 @@ export default {
 			this.$refs["table"].sort(prop, order);
 		},
 
-		sortChange({ prop, order }) {
+		onSortChange({ prop, order }) {
 			if (order === "descending") {
 				order = "desc";
 			}
@@ -334,9 +337,101 @@ export default {
 			}
 		},
 
-		selectionChange(selection) {
+		onSelectionChange(selection) {
 			this.dispatch("cl-crud", "table.selection-change", { selection });
 			this.$emit("selection-change", selection);
+		},
+
+		onRowContextMenu(row, column, event) {
+			const { rowEdit, rowDelete, getPermission, selection, table = {} } = this.crud;
+
+			// context-menu conf
+			let cm = this.contextMenu || (isEmpty(this.contextMenu) ? false : table['context-menu'])
+
+			let buttons = ['check', 'edit', 'delete', 'order-desc', 'order-asc']
+			let enable = false
+
+			if (cm) {
+				if (isArray(cm)) {
+					buttons = cm || []
+					enable = buttons.length > 0
+				} else {
+					enable = true
+				}
+			}
+
+			if (enable) {
+				// Parse buttons
+				let list = buttons
+					.map(e => {
+						switch (e) {
+							case 'edit':
+							case 'update':
+								return {
+									label: "编辑",
+									hidden: !getPermission('update'),
+									callback: (e, done) => {
+										rowEdit(row);
+										done();
+									}
+								}
+							case 'delete':
+								return {
+									label: "删除",
+									hidden: !getPermission('delete'),
+									callback: (item, done) => {
+										rowDelete(row);
+										done();
+									}
+								}
+							case 'check':
+								return {
+									label: Boolean(selection.find(e => e.id == row.id)) ? "取消选择" : "选择",
+									hidden: !Boolean(this.columns.find(e => e.type === 'selection')),
+									callback: (item, done) => {
+										this.toggleRowSelection(row)
+										done();
+									}
+								}
+							case 'order-desc':
+								return {
+									label: `${column.label} - 降序`,
+									hidden: !column.sortable,
+									callback: (item, done) => {
+										this.changeSort(column.property, 'desc')
+										done();
+									}
+								}
+							case 'order-asc':
+								return {
+									label: `${column.label} - 升序`,
+									hidden: !column.sortable,
+									callback: (item, done) => {
+										this.changeSort(column.property, 'asc')
+										done();
+									}
+								}
+							default:
+								if (isFunction(e)) {
+									return e(row, column, event)
+								} else {
+									return e
+								}
+						}
+					})
+					.filter(Boolean)
+
+				// Open context menu
+				this.$crud.openContextMenu(event, {
+					list
+				});
+
+				event.preventDefault();
+			}
+
+			if (this.on['row-contextmenu']) {
+				this.on['row-contextmenu'](row, column, event)
+			}
 		},
 
 		bindEmit() {
@@ -427,34 +522,33 @@ export default {
 	render() {
 		return (
 			<div class="cl-table">
-				{
-					<el-table
-						ref="table"
-						data={this.data}
-						v-loading={this.crud.loading}
-						{...{
-							on: {
-								"selection-change": this.selectionChange,
-								"sort-change": this.sortChange,
-								...this.emit,
-								...this.on
-							},
-							props: {
-								"max-height": this.maxHeight + "px",
-								border: true,
-								size: "mini",
-								...this.props
-							},
-							scopedSlots: {
-								...this.$scopedSlots
-							},
-							slots: {
-								...this.$slots
-							}
-						}}>
-						{this.columnRender()}
-					</el-table>
-				}
+				<el-table
+					ref="table"
+					data={this.data}
+					v-loading={this.crud.loading}
+					{...{
+						on: {
+							"selection-change": this.onSelectionChange,
+							"sort-change": this.onSortChange,
+							...this.emit,
+							...this.on,
+							'row-contextmenu': this.onRowContextMenu,
+						},
+						props: {
+							"max-height": this.maxHeight + "px",
+							border: true,
+							size: "mini",
+							...this.props
+						},
+						scopedSlots: {
+							...this.$scopedSlots
+						},
+						slots: {
+							...this.$slots
+						}
+					}}>
+					{this.renderColumn()}
+				</el-table>
 			</div>
 		);
 	}

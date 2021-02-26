@@ -1,6 +1,6 @@
 import cloneDeep from "clone-deep";
 import flat from "array.prototype.flat";
-import { __inst } from "@/store";
+import { __inst, __vue } from "@/store";
 
 export function isArray(value) {
 	if (typeof Array.isArray === "function") {
@@ -120,6 +120,28 @@ export function deepMerge(a, b) {
 			a[k] && a[k].toString() === "[object Object]" ? deepMerge(a[k], b[k]) : (a[k] = b[k]);
 	}
 	return a;
+}
+
+export function contains(parent, node) {
+	if (document.documentElement.contains) {
+		return parent !== node && parent.contains(node);
+	} else {
+		while (node && (node = node.parentNode)) if (node === parent) return true;
+		return false;
+	}
+}
+
+export function getInstance(component) {
+	const ComponentConstructor = __vue.extend(component)
+	return new ComponentConstructor({
+		el: document.createElement('div')
+	})
+}
+
+export function appendToBody(component, callback) {
+	const instance = getInstance(component)
+	document.body.appendChild(instance.$el);
+	callback(instance)
 }
 
 export { cloneDeep, flat };

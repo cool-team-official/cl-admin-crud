@@ -66,6 +66,9 @@
 						</el-select>
 					</cl-filter>
 					<el-button size="mini" @click="openForm">自定义测试表单</el-button>
+					<p style="margin-left: 10px" @contextmenu.stop.prevent="openContextMenu">
+						<el-button size="mini">测试右键菜单</el-button>
+					</p>
 					<cl-flex1></cl-flex1>
 					<cl-search-key
 						field="name"
@@ -255,6 +258,8 @@
 
 			Vue.use(CRUD);
 
+			console.log(Form)
+
 			Vue.component("cl-test", {
 				data() {
 					return {
@@ -297,6 +302,30 @@
 							},
 
 							props: {
+								"context-menu": [
+									"check",
+									"order-desc",
+									"order-asc",
+									"edit",
+									"delete",
+									{
+										label: "自定义按钮",
+										callback: (item, done) => {
+											this.$message.success("点击自定义按钮");
+											done();
+										}
+									},
+									(row, column, event) => {
+										return {
+											label: "自定义按钮 - 方法",
+											callback: (item, done) => {
+												done();
+												this.$message.success("点击自定义按钮 - 方法");
+											}
+										};
+									}
+								],
+
 								columns: [
 									{
 										type: "selection",
@@ -525,7 +554,6 @@
 						}
 					};
 				},
-
 				methods: {
 					openForm() {
 						this.$refs["form"].open({
@@ -774,6 +802,53 @@
 											"以艮山之灵形成一道壁障，受此壁障守护者刀枪不入"
 										);
 									}
+								}
+							]
+						});
+					},
+
+					openContextMenu(e) {
+						const cm = this.$crud.openContextMenu(e, {
+							list: [
+								{
+									label: "新增",
+									"suffix-icon": "el-icon-plus",
+									callback: () => {
+										this.$message.info("点击了新增");
+									}
+								},
+								{
+									label: "编辑",
+									"suffix-icon": "el-icon-edit",
+									callback: (item, done) => {
+										this.$message.info("点击了编辑");
+										done();
+									}
+								},
+								{
+									label: "删除",
+									"suffix-icon": "el-icon-delete"
+								},
+								{
+									label: "二级",
+									"suffix-icon": "el-icon-right",
+									children: [
+										{
+											label: "文本超出隐藏，有一天晚上",
+											ellipsis: true
+										},
+										{
+											label: "禁用",
+											disabled: true
+										},
+										{
+											label: "更多",
+											callback: (item, done) => {
+												this.$message.warning("开发中");
+												done();
+											}
+										}
+									]
 								}
 							]
 						});

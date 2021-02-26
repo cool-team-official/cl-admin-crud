@@ -77,12 +77,16 @@ export default {
 
 		// Clear form data
 		clearForm() {
-			this.$refs["form"].clearValidate();
+			if (this.$refs['form']) {
+				this.$refs["form"].clearValidate();
+			}
 		},
 
 		// Reset form data
 		resetForm() {
-			this.$refs['form'].resetFields()
+			if (this.$refs['form']) {
+				this.$refs['form'].resetFields()
+			}
 		}
 	}
 };

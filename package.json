@@ -1,6 +1,6 @@
 {
 	"name": "cl-admin-crud",
-	"version": "1.1.5",
+	"version": "1.2.5",
 	"main": "/dist/cl-admin-crud.min.js",
 	"license": "MIT",
 	"scripts": {

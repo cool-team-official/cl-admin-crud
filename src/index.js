@@ -1,67 +1,41 @@
+import * as components from './components'
 import * as store from "./store";
-import Crud from './components/crud'
-import AddBtn from './components/add-btn'
-import AdvBtn from './components/adv-btn'
-import AdvSearch from './components/adv-search'
-import Flex from './components/flex1'
-import Form from './components/form'
-import MultiDeleteBtn from './components/multi-delete-btn'
-import Pagination from './components/pagination'
-import Query from './components/query'
-import RefreshBtn from './components/refresh-btn'
-import SearchKey from './components/search-key'
-import Table from './components/table'
-import Upsert from './components/upsert'
-import Dialog from './components/dialog'
-import Filter from './components/filter'
-import ErrorMessage from './components/error-message'
+import { getInstance } from './utils'
 
 require("./common");
 
-const components = [
-	Crud,
-	AddBtn,
-	AdvBtn,
-	AdvSearch,
-	Flex,
-	Form,
-	MultiDeleteBtn,
-	Pagination,
-	Query,
-	RefreshBtn,
-	SearchKey,
-	Table,
-	Upsert,
-	Dialog,
-	Filter,
-	ErrorMessage
-]
+let Form = null
+let ContextMenu = null
 
 const install = function (Vue, options = {}) {
 	const { crud = {} } = options;
 
-	// 设置缓存数据
+	// Set options store
 	store.__crud = crud;
 	store.__vue = Vue;
 	store.__inst = new Vue();
 
-	// 注册组件
-	components.forEach(e => {
-		Vue.component(e.name, e);
-	})
+	// Register components
+	for (let i in components) {
+		Vue.component(components[i].name, components[i]);
+	}
 
-	// 挂载 $crud
+	// Get instance
+	Form = getInstance(components.Form)
+	ContextMenu = getInstance(components.ContextMenu)
+
+	// Mount $crud
 	Vue.prototype.$crud = {
-		emit: (name, options) => {
+		emit(name, options) {
 			store.__inst.$emit(name, options);
 		},
-		openForm: (options) => {
-			const FormConstructor = Vue.extend(Form)
-			const instance = new FormConstructor({
-				el: document.createElement('div')
-			})
-			instance.open(options)
-			document.body.appendChild(instance.$el);
+		openForm(options) {
+			document.body.appendChild(Form.$el);
+			return Form.open(options)
+		},
+		openContextMenu(e, options) {
+			document.body.appendChild(ContextMenu.$el);
+			return ContextMenu.open(e, options)
 		}
 	};
 
@@ -69,10 +43,14 @@ const install = function (Vue, options = {}) {
 }
 
 export const CRUD = {
-	install
+	install,
+	Form,
+	ContextMenu
 };
 
+export { Form, ContextMenu }
+
 export default {
-	version: '1.1.5',
+	version: '1.2.5',
 	install
 };

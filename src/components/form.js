@@ -123,6 +123,8 @@ export default {
 					});
 				});
 			}
+
+			return this
 		},
 
 		beforeClose() {
@@ -202,7 +204,7 @@ export default {
 			}
 		},
 
-		formRender() {
+		renderForm() {
 			const { props, items } = this.conf;
 
 			return (
@@ -308,7 +310,7 @@ export default {
 			);
 		},
 
-		footerRender() {
+		renderFooter() {
 			const { hidden, buttons, saveButtonText, closeButtonText } = this.conf.op;
 			const { size = "small" } = this.conf.props;
 
@@ -384,9 +386,9 @@ export default {
 							'closed': this.onClosed
 						}
 					}}>
-					<div class="cl-form__container">{this.formRender()}</div>
+					<div class="cl-form__container">{this.renderForm()}</div>
 					<div class="cl-form__footer" slot="footer">
-						{this.footerRender()}
+						{this.renderFooter()}
 					</div>
 				</cl-dialog>
 			</div>

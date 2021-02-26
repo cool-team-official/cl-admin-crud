@@ -2,6 +2,7 @@ import Crud from './crud'
 import AddBtn from "./add-btn";
 import AdvBtn from "./adv-btn";
 import AdvSearch from "./adv-search";
+import ContextMenu from "./context-menu";
 import Flex from "./flex1";
 import Form from "./form";
 import MultiDeleteBtn from "./multi-delete-btn";
@@ -20,6 +21,7 @@ export {
 	AddBtn,
 	AdvBtn,
 	AdvSearch,
+	ContextMenu,
 	Flex,
 	Form,
 	MultiDeleteBtn,
