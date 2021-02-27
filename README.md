@@ -17,7 +17,7 @@ yarn add cl-admin-crud
 #### Browser
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/cl-admin-crud@1.2.5/dist/cl-admin-crud.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/cl-admin-crud@1.2.6/dist/cl-admin-crud.min.js"></script>
 ```
 
 ## Demo
@@ -29,10 +29,11 @@ yarn add cl-admin-crud
 
 ## Document
 
-[https://docs-admin-pro.cool-js.com/#/front/crud](https://docs-admin-pro.cool-js.com/#/front/crud)
+[https://admin.cool-js.com/front/crud/crud.html](https://admin.cool-js.com/front/crud/crud.html)
 
 ## Version
 
+-   1.2.6 添加 v-contextmenu 指令
 -   1.2.0 添加 cl-context-menu
 -   1.1.5 调整参数
 -   1.0.7 解决 $crud.emit 失效问题

@@ -66,7 +66,7 @@
 						</el-select>
 					</cl-filter>
 					<el-button size="mini" @click="openForm">自定义测试表单</el-button>
-					<p style="margin-left: 10px" @contextmenu.stop.prevent="openContextMenu">
+					<p style="margin-left: 10px" v-contextmenu="contextMenu">
 						<el-button size="mini">测试右键菜单</el-button>
 					</p>
 					<cl-flex1></cl-flex1>
@@ -258,8 +258,6 @@
 
 			Vue.use(CRUD);
 
-			console.log(Form)
-
 			Vue.component("cl-test", {
 				data() {
 					return {
@@ -373,6 +371,7 @@
 										label: "操作",
 										type: "op",
 										align: "center",
+										name: "dropdown-menu",
 										buttons: [
 											"edit",
 											"delete",
@@ -551,9 +550,69 @@
 						},
 						dialog: {
 							visible: false
-						}
+						},
+						contextMenu: [
+							{
+								label: "新增",
+								"suffix-icon": "el-icon-plus",
+								callback: (item, done) => {
+									this.$message.success("点击了新增");
+									done();
+								}
+							},
+							{
+								label: "编辑",
+								"suffix-icon": "el-icon-edit",
+								callback: (item, done) => {
+									this.$message.success("点击了编辑");
+									done();
+								}
+							},
+							{
+								label: "删除",
+								"suffix-icon": "el-icon-delete",
+								callback: (item, done) => {
+									this.$message.error("点击了删除");
+									done();
+								}
+							},
+							{
+								label: "二级",
+								"suffix-icon": "el-icon-right",
+								children: [
+									{
+										label: "文本超出隐藏，有一天晚上",
+										ellipsis: true
+									},
+									{
+										label: "禁用",
+										disabled: true
+									},
+									{
+										label: "更多",
+										children: [
+											{
+												label: "打开表单",
+												callback: (item, done) => {
+													this.openForm();
+													done();
+												}
+											},
+											{
+												label: "新增",
+												callback: (item, done) => {
+													this.$refs["crud"].rowAdd();
+													done();
+												}
+											}
+										]
+									}
+								]
+							}
+						]
 					};
 				},
+				mounted() {},
 				methods: {
 					openForm() {
 						this.$refs["form"].open({

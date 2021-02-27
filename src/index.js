@@ -1,11 +1,11 @@
-import * as components from './components'
+import * as components from "./components";
 import * as store from "./store";
-import { getInstance } from './utils'
+import { getInstance } from "./utils";
 
 require("./common");
 
-let Form = null
-let ContextMenu = null
+let Form = null;
+let ContextMenu = null;
 
 const install = function (Vue, options = {}) {
 	const { crud = {} } = options;
@@ -21,26 +21,34 @@ const install = function (Vue, options = {}) {
 	}
 
 	// Get instance
-	Form = getInstance(components.Form)
-	ContextMenu = getInstance(components.ContextMenu)
+	Form = getInstance(components.Form);
+	ContextMenu = getInstance(components.ContextMenu);
+
+	// Register directive: contextmenu
+	(function () {
+		function fn(el, binding) {
+			el.oncontextmenu = function (e) {
+				ContextMenu.open(e, {
+					list: binding.value || []
+				});
+			};
+		}
+
+		Vue.directive("contextmenu", {
+			inserted: fn,
+			update: fn
+		});
+	})();
 
 	// Mount $crud
 	Vue.prototype.$crud = {
-		emit(name, options) {
-			store.__inst.$emit(name, options);
-		},
-		openForm(options) {
-			document.body.appendChild(Form.$el);
-			return Form.open(options)
-		},
-		openContextMenu(e, options) {
-			document.body.appendChild(ContextMenu.$el);
-			return ContextMenu.open(e, options)
-		}
+		emit: store.__inst.$emit,
+		openForm: Form.open,
+		openContextMenu: ContextMenu.open
 	};
 
-	return {}
-}
+	return {};
+};
 
 export const CRUD = {
 	install,
@@ -48,9 +56,9 @@ export const CRUD = {
 	ContextMenu
 };
 
-export { Form, ContextMenu }
+export { Form, ContextMenu };
 
 export default {
-	version: '1.2.5',
+	version: "1.2.6",
 	install
 };

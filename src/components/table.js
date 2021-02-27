@@ -64,7 +64,7 @@ export default {
 		this.renderEmpty();
 		this.calcMaxHeight();
 		this.bindEmit();
-		this.bindMethods()
+		this.bindMethods();
 	},
 	methods: {
 		renderColumn() {
@@ -194,7 +194,7 @@ export default {
 						const perm = getPermission(vnode);
 
 						if (perm) {
-							let clickEvent = () => { };
+							let clickEvent = () => {};
 							let buttonText = null;
 
 							switch (vnode) {
@@ -242,28 +242,21 @@ export default {
 								// Dropdown op
 								if (item.name == "dropdown-menu") {
 									const slot = this.$scopedSlots["table-op-dropdown-menu"];
-									const { width } = item["dropdown-menu"] || {};
+									const { width = "97px", label } = item["dropdown-menu"] || {};
 									const items = render(scope).map((e) => {
 										return <el-dropdown-item>{e}</el-dropdown-item>;
 									});
 
 									el = (
-										<el-dropdown
-											{...{
-												on,
-												props: {
-													trigger: "click",
-													...item.props
-												}
-											}}>
+										<el-dropdown trigger="click" placement="bottom">
 											{slot ? (
 												slot({ scope })
 											) : (
-													<span class="el-dropdown-link">
-														<span>更多操作</span>
-														<i class="el-icon-arrow-down el-icon--right"></i>
-													</span>
-												)}
+												<el-button plain size="mini">
+													{label || "更多操作"}
+													<i class="el-icon-arrow-down el-icon--right"></i>
+												</el-button>
+											)}
 
 											<el-dropdown-menu
 												style={{ width }}
@@ -346,91 +339,94 @@ export default {
 			const { rowEdit, rowDelete, getPermission, selection, table = {} } = this.crud;
 
 			// context-menu conf
-			let cm = this.contextMenu || (isEmpty(this.contextMenu) ? false : table['context-menu'])
+			let cm =
+				this.contextMenu || (isEmpty(this.contextMenu) ? false : table["context-menu"]);
 
-			let buttons = ['check', 'edit', 'delete', 'order-desc', 'order-asc']
-			let enable = false
+			let buttons = ["check", "edit", "delete", "order-desc", "order-asc"];
+			let enable = false;
 
 			if (cm) {
 				if (isArray(cm)) {
-					buttons = cm || []
-					enable = buttons.length > 0
+					buttons = cm || [];
+					enable = buttons.length > 0;
 				} else {
-					enable = true
+					enable = true;
 				}
 			}
 
 			if (enable) {
 				// Parse buttons
 				let list = buttons
-					.map(e => {
+					.map((e) => {
 						switch (e) {
-							case 'edit':
-							case 'update':
+							case "edit":
+							case "update":
 								return {
 									label: "编辑",
-									hidden: !getPermission('update'),
+									hidden: !getPermission("update"),
 									callback: (e, done) => {
 										rowEdit(row);
 										done();
 									}
-								}
-							case 'delete':
+								};
+							case "delete":
 								return {
 									label: "删除",
-									hidden: !getPermission('delete'),
+									hidden: !getPermission("delete"),
 									callback: (item, done) => {
 										rowDelete(row);
 										done();
 									}
-								}
-							case 'check':
+								};
+							case "check":
 								return {
-									label: Boolean(selection.find(e => e.id == row.id)) ? "取消选择" : "选择",
-									hidden: !Boolean(this.columns.find(e => e.type === 'selection')),
+									label: Boolean(selection.find((e) => e.id == row.id))
+										? "取消选择"
+										: "选择",
+									hidden: !Boolean(
+										this.columns.find((e) => e.type === "selection")
+									),
 									callback: (item, done) => {
-										this.toggleRowSelection(row)
+										this.toggleRowSelection(row);
 										done();
 									}
-								}
-							case 'order-desc':
+								};
+							case "order-desc":
 								return {
 									label: `${column.label} - 降序`,
 									hidden: !column.sortable,
 									callback: (item, done) => {
-										this.changeSort(column.property, 'desc')
+										this.changeSort(column.property, "desc");
 										done();
 									}
-								}
-							case 'order-asc':
+								};
+							case "order-asc":
 								return {
 									label: `${column.label} - 升序`,
 									hidden: !column.sortable,
 									callback: (item, done) => {
-										this.changeSort(column.property, 'asc')
+										this.changeSort(column.property, "asc");
 										done();
 									}
-								}
+								};
 							default:
 								if (isFunction(e)) {
-									return e(row, column, event)
+									return e(row, column, event);
 								} else {
-									return e
+									return e;
 								}
 						}
 					})
-					.filter(Boolean)
+					.filter(Boolean);
 
 				// Open context menu
 				this.$crud.openContextMenu(event, {
 					list
 				});
-
-				event.preventDefault();
 			}
 
-			if (this.on['row-contextmenu']) {
-				this.on['row-contextmenu'](row, column, event)
+			if (this.on["row-contextmenu"]) {
+				this.on["row-contextmenu"](row, column, event);
 			}
 		},
 
@@ -471,16 +467,16 @@ export default {
 				"clearFilter",
 				"doLayout",
 				"sort"
-			]
+			];
 
-			list.forEach(n => {
+			list.forEach((n) => {
 				this[n] = this.$refs["table"][n];
 			});
 		},
 
 		calcMaxHeight() {
 			if (!this.autoHeight) {
-				return false
+				return false;
 			}
 
 			return this.$nextTick(() => {
@@ -532,7 +528,7 @@ export default {
 							"sort-change": this.onSortChange,
 							...this.emit,
 							...this.on,
-							'row-contextmenu': this.onRowContextMenu,
+							"row-contextmenu": this.onRowContextMenu
 						},
 						props: {
 							"max-height": this.maxHeight + "px",
