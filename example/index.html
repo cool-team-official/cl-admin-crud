@@ -38,16 +38,16 @@
 						field="status"
 						:list="[
 							{
-								label: '启用',
+								label: '上班',
 								value: 1
 							},
 							{
-								label: '禁用',
+								label: '下班',
 								value: 0
 							}
 						]"
 					></cl-query>
-					<cl-filter label="状态">
+					<cl-filter label="工作状态">
 						<el-select
 							size="mini"
 							v-model="selects.status"
@@ -61,8 +61,8 @@
 							"
 						>
 							<el-option value="" label="全部"></el-option>
-							<el-option :value="0" label="禁用"></el-option>
-							<el-option :value="1" label="启用"></el-option>
+							<el-option :value="0" label="下班"></el-option>
+							<el-option :value="1" label="上班"></el-option>
 						</el-select>
 					</cl-filter>
 					<el-button size="mini" @click="openForm">自定义测试表单</el-button>
@@ -308,6 +308,7 @@
 									"delete",
 									{
 										label: "自定义按钮",
+										hidden: true,
 										callback: (item, done) => {
 											this.$message.success("点击自定义按钮");
 											done();
@@ -344,18 +345,18 @@
 										"min-width": 120
 									},
 									{
-										label: "状态",
+										label: "工作状态",
 										prop: "status",
 										align: "center",
 										"min-width": 120,
 										dict: [
 											{
-												label: "启用",
+												label: "上班",
 												value: 1,
 												type: "primary"
 											},
 											{
-												label: "禁用",
+												label: "下班",
 												value: 0,
 												type: "danger"
 											}
@@ -371,7 +372,7 @@
 										label: "操作",
 										type: "op",
 										align: "center",
-										name: "dropdown-menu",
+										// name: "dropdown-menu",
 										buttons: [
 											"edit",
 											"delete",
@@ -442,8 +443,28 @@
 
 								items: [
 									{
+										type: "tabs",
+										props: {
+											labels: [
+												{
+													label: "基本信息",
+													value: "base"
+												},
+												{
+													label: "金融",
+													value: "financial"
+												},
+												{
+													label: "工作",
+													value: "work"
+												}
+											]
+										}
+									},
+									{
 										label: "姓名",
 										prop: "name",
+										group: "base",
 										component: {
 											name: "el-input"
 										},
@@ -456,6 +477,7 @@
 										label: "存款",
 										prop: "price",
 										value: 0,
+										group: "financial",
 										component: {
 											name: "el-input-number"
 										},
@@ -468,18 +490,19 @@
 										}
 									},
 									{
-										label: "状态",
+										label: "工作状态",
 										prop: "status",
 										value: 1,
+										group: "work",
 										component: {
 											name: "el-radio-group",
 											options: [
 												{
-													label: "启用",
+													label: "上班",
 													value: 1
 												},
 												{
-													label: "禁用",
+													label: "下班",
 													value: 0
 												}
 											]
@@ -529,17 +552,17 @@
 										}
 									},
 									{
-										label: "状态",
+										label: "工作状态",
 										prop: "status",
 										component: {
 											name: "el-radio-group",
 											options: [
 												{
-													label: "启用",
+													label: "上班",
 													value: 1
 												},
 												{
-													label: "禁用",
+													label: "下班",
 													value: 0
 												}
 											]

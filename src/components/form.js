@@ -20,7 +20,7 @@ export default {
 	provide() {
 		return {
 			form: this.form
-		}
+		};
 	},
 	data() {
 		return {
@@ -29,11 +29,11 @@ export default {
 			loading: false,
 			form: {},
 			conf: {
-				title: '自定义表单',
-				width: '50%',
+				title: "自定义表单",
+				width: "50%",
 				props: {
 					size: "small",
-					"label-width": "100px",
+					"label-width": "100px"
 				},
 				on: {
 					open: null,
@@ -44,20 +44,21 @@ export default {
 					hidden: false,
 					saveButtonText: "保存",
 					closeButtonText: "取消",
-					buttons: ["close", "save"],
+					buttons: ["close", "save"]
 				},
 				dialog: {
 					props: {
 						fullscreen: false,
 						"close-on-click-modal": false,
-						"append-to-body": true,
+						"append-to-body": true
 					},
 					hiddenControls: false,
 					controls: ["fullscreen", "close"]
 				},
 				items: [],
 				_data: {}
-			}
+			},
+			tabActive: null
 		};
 	},
 	watch: {
@@ -80,12 +81,12 @@ export default {
 			// Merge conf
 			for (let i in this.conf) {
 				switch (i) {
-					case 'items':
+					case "items":
 						this.conf.items = cloneDeep(options.items || []);
-						break
-					case 'title':
-					case 'width':
-						this.conf[i] = options[i]
+						break;
+					case "title":
+					case "width":
+						this.conf[i] = options[i];
 						break;
 					default:
 						deepMerge(this.conf[i], options[i]);
@@ -124,14 +125,14 @@ export default {
 				});
 			}
 
-			return this
+			return this;
 		},
 
 		beforeClose() {
 			if (this.conf.on.close) {
 				this.conf.on.close(this.close);
 			} else {
-				this.close()
+				this.close();
 			}
 		},
 
@@ -143,7 +144,7 @@ export default {
 
 		onClosed() {
 			for (let i in this.form) {
-				delete this.form[i]
+				delete this.form[i];
 			}
 		},
 
@@ -152,7 +153,7 @@ export default {
 		},
 
 		clear() {
-			this.clearForm()
+			this.clearForm();
 		},
 
 		submit() {
@@ -219,8 +220,17 @@ export default {
 							...props
 						}
 					}}>
+					{/* el-form-item list */}
 					<el-row gutter={10} v-loading={this.loading}>
 						{items.map((e, i) => {
+							if (e.type == "tabs") {
+								return (
+									<cl-form-tabs
+										v-model={this.tabActive}
+										{...{ props: { ...e.props } }}></cl-form-tabs>
+								);
+							}
+
 							// Is hidden
 							e._hidden = Parse("hidden", {
 								value: e.hidden,
@@ -228,7 +238,11 @@ export default {
 								data: this.conf._data
 							});
 
+							// Is group
+							e._group = isEmpty(this.tabActive) ? true : e.group === this.tabActive;
+
 							return (
+								e._group &&
 								!e._hidden && (
 									<el-col
 										key={`form-item-${i}`}
@@ -270,7 +284,11 @@ export default {
 																		class={[
 																			`cl-form-item__${name}`,
 																			{
-																				"is-flex": isEmpty(e.flex) ? true : e.flex
+																				"is-flex": isEmpty(
+																					e.flex
+																				)
+																					? true
+																					: e.flex
 																			}
 																		]}
 																		v-show={!e.collapse}>
@@ -314,9 +332,9 @@ export default {
 			const { hidden, buttons, saveButtonText, closeButtonText } = this.conf.op;
 			const { size = "small" } = this.conf.props;
 
-			return (
-				hidden ? null :
-					buttons.map((vnode) => {
+			return hidden
+				? null
+				: buttons.map((vnode) => {
 						if (vnode == "save") {
 							return (
 								<el-button
@@ -329,7 +347,7 @@ export default {
 										},
 										on: {
 											click: () => {
-												this.submit()
+												this.submit();
 											}
 										}
 									}}>
@@ -345,7 +363,7 @@ export default {
 										},
 										on: {
 											click: () => {
-												this.beforeClose()
+												this.beforeClose();
 											}
 										}
 									}}>
@@ -358,8 +376,7 @@ export default {
 								$scopedSlots: this.$scopedSlots
 							});
 						}
-					})
-			);
+				  });
 		}
 	},
 
@@ -377,13 +394,13 @@ export default {
 							...dialog,
 							props: {
 								...dialog.props,
-								'before-close': this.beforeClose
+								"before-close": this.beforeClose
 							}
 						},
 						on: {
-							'update:visible': (v) => (this.visible = v),
+							"update:visible": (v) => (this.visible = v),
 							"update:props:fullscreen": (v) => (dialog.props.fullscreen = v),
-							'closed': this.onClosed
+							closed: this.onClosed
 						}
 					}}>
 					<div class="cl-form__container">{this.renderForm()}</div>

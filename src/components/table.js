@@ -169,7 +169,10 @@ export default {
 						const childrenEl = item.children ? item.children.map(deep) : null;
 
 						return (
-							<el-table-column key={`crud-table-column-${index}`} {...params}>
+							<el-table-column
+								key={`crud-table-column-${index}`}
+								align="center"
+								{...params}>
 								{childrenEl}
 							</el-table-column>
 						);
@@ -233,6 +236,7 @@ export default {
 						props: {
 							label: "操作",
 							width: "160px",
+							align: "center",
 							...item
 						},
 						scopedSlots: {
@@ -348,7 +352,7 @@ export default {
 			if (cm) {
 				if (isArray(cm)) {
 					buttons = cm || [];
-					enable = buttons.length > 0;
+					enable = Boolean(buttons.length > 0);
 				} else {
 					enable = true;
 				}
@@ -417,12 +421,14 @@ export default {
 								}
 						}
 					})
-					.filter(Boolean);
+					.filter((e) => Boolean(e) && !e.hidden);
 
 				// Open context menu
-				this.$crud.openContextMenu(event, {
-					list
-				});
+				if (list.length > 0) {
+					this.$crud.openContextMenu(event, {
+						list
+					});
+				}
 			}
 
 			if (this.on["row-contextmenu"]) {

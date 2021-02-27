@@ -1,6 +1,6 @@
 import { renderNode } from "@/utils/vnode";
 import { isBoolean } from "@/utils";
-import { Screen } from '@/mixins'
+import { Screen } from "@/mixins";
 
 export default {
 	name: "cl-dialog",
@@ -13,7 +13,7 @@ export default {
 		},
 		width: {
 			type: String,
-			default: '50%'
+			default: "50%"
 		},
 		drag: {
 			type: Boolean,
@@ -50,7 +50,7 @@ export default {
 	data() {
 		return {
 			cacheKey: 0
-		}
+		};
 	},
 	watch: {
 		"props.fullscreen"(f) {
@@ -98,14 +98,14 @@ export default {
 		},
 
 		onOpened() {
-			this.$emit('opened')
+			this.$emit("opened");
 		},
 
 		beforeClose() {
-			if (this.props['before-close']) {
-				this.props['before-close'](this.close)
+			if (this.props["before-close"]) {
+				this.props["before-close"](this.close);
 			} else {
-				this.close()
+				this.close();
 			}
 		},
 
@@ -119,7 +119,7 @@ export default {
 		},
 
 		onClosed() {
-			this.$emit('closed')
+			this.$emit("closed");
 		},
 
 		// Change dialog fullscreen status
@@ -267,48 +267,63 @@ export default {
 					<span class="cl-dialog__title">{this.title}</span>
 					{/* Controls */}
 					<div class="cl-dialog__controls">
-						{this.hiddenControls ? null : this.controls.map((vnode) => {
-							// Fullscreen
-							if (vnode === "fullscreen") {
-								// Hidden fullscreen btn
-								if (this.screen === 'xs') {
-									return null
-								}
+						{this.hiddenControls
+							? null
+							: this.controls.map((vnode) => {
+									// Fullscreen
+									if (vnode === "fullscreen") {
+										// Hidden fullscreen btn
+										if (this.screen === "xs") {
+											return null;
+										}
 
-								// Show diff icon
-								if (this.props.fullscreen) {
-									return (
-										<button type="button" class="minimize" on-click={() => { this.changeFullscreen(false) }}>
-											<i class="el-icon-minus" />
-										</button>
-									)
-								} else {
-									return (
-										<button type="button" class="maximize" on-click={() => { this.changeFullscreen(true) }}>
-											<i class="el-icon-full-screen" />
-										</button>
-									)
-								}
-							}
-							// Close
-							else if (vnode === "close") {
-								return (
-									<button type="button" class="close" on-click={this.beforeClose}>
-										<i class="el-icon-close" />
-									</button>
-								);
-							}
-							// Custom node render
-							else {
-								return renderNode(vnode, {
-									$scopedSlots: this.$scopedSlots
-								});
-							}
-						})}
+										// Show diff icon
+										if (this.props.fullscreen) {
+											return (
+												<button
+													type="button"
+													class="minimize"
+													on-click={() => {
+														this.changeFullscreen(false);
+													}}>
+													<i class="el-icon-minus" />
+												</button>
+											);
+										} else {
+											return (
+												<button
+													type="button"
+													class="maximize"
+													on-click={() => {
+														this.changeFullscreen(true);
+													}}>
+													<i class="el-icon-full-screen" />
+												</button>
+											);
+										}
+									}
+									// Close
+									else if (vnode === "close") {
+										return (
+											<button
+												type="button"
+												class="close"
+												on-click={this.beforeClose}>
+												<i class="el-icon-close" />
+											</button>
+										);
+									}
+									// Custom node render
+									else {
+										return renderNode(vnode, {
+											$scopedSlots: this.$scopedSlots
+										});
+									}
+							  })}
 					</div>
 				</div>
 			);
-		},
+		}
 	},
 
 	render() {
@@ -321,7 +336,7 @@ export default {
 						fullscreen: this.isFullscreen ? true : this.props.fullscreen,
 						visible: this.visible,
 						"show-close": false,
-						'custom-class': `cl-dialog ${this.props.customClass || ''}`
+						"custom-class": `cl-dialog ${this.props.customClass || ""}`
 					},
 					on: {
 						open: this.open,
@@ -337,12 +352,11 @@ export default {
 					{this.$slots.default}
 				</div>
 				{/* Footer */}
-				{
-					this.$slots.footer &&
+				{this.$slots.footer && (
 					<div class="cl-dialog__footer" slot="footer">
 						{this.$slots.footer}
 					</div>
-				}
+				)}
 			</el-dialog>
 		);
 	}

@@ -1,10 +1,11 @@
-import Crud from './crud'
+import Crud from "./crud";
 import AddBtn from "./add-btn";
 import AdvBtn from "./adv-btn";
 import AdvSearch from "./adv-search";
 import ContextMenu from "./context-menu";
 import Flex from "./flex1";
 import Form from "./form";
+import FormTabs from "./form-tabs";
 import MultiDeleteBtn from "./multi-delete-btn";
 import Pagination from "./pagination";
 import Query from "./query";
@@ -24,6 +25,7 @@ export {
 	ContextMenu,
 	Flex,
 	Form,
+	FormTabs,
 	MultiDeleteBtn,
 	Pagination,
 	Query,

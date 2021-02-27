@@ -269,6 +269,30 @@
 	}
 }
 
+.cl-form-tabs {
+	margin-bottom: 20px;
+	border-bottom: 1px solid #ccc;
+
+	ul {
+		display: flex;
+
+		li {
+			list-style: none;
+			padding: 0 20px;
+			height: 35px;
+			line-height: 35px;
+			cursor: pointer;
+			color: #999;
+
+			&:hover,
+			&.is-active {
+				background-color: #f7f7f7;
+				color: #000;
+			}
+		}
+	}
+}
+
 .cl-dialog {
 	.el-dialog {
 		&__header {
