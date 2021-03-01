@@ -1,37 +1,30 @@
 # cl-admin-crud
 
-## Install
+<p align="center">
+  <a href="https://midwayjs.org/" target="blank"><img src="https://admin.cool-js.com/logo.png" width="200" alt="cool-admin Logo" /></a>
+</p>
 
-#### npm
+<p align="center">cl-admin-crud 是基于 cool-admin 的 crud 高阶组件</p>
 
-```shell
-npm i cl-admin-crud
-```
+<p align="center">
+    <a href="https://github.com/cool-team-official/cool-admin-vue/blob/master/LICENSE" target="_blank"><img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="GitHub license" />
+    <a href=""><img src="https://img.shields.io/github/package-json/v/cool-team-official/cl-admin-crud?style=flat-square" alt="GitHub tag"></a>
+    <img src="https://img.shields.io/github/last-commit/cool-team-official/cl-admin-crud?style=flat-square" alt="GitHub tag"></a>
+</p>
 
-#### yarn
+## 预览地址
 
-```shell
-yarn add cl-admin-crud
-```
+[https://show.cool-admin.com/](https://show.cool-admin.com/)
 
-#### Browser
+## 项目地址
 
-```html
-<script src="https://cdn.jsdelivr.net/npm/cl-admin-crud@1.3.2/dist/cl-admin-crud.min.js"></script>
-```
+[https://github.com/cool-team-official/cl-admin-crud](https://github.com/cool-team-official/cl-admin-crud)
 
-## Demo
-
-[https://show.cool-admin.com](https://show.cool-admin.com/)
-
-账号 admin
-密码 123456
-
-## Document
+## 文档地址
 
 [https://admin.cool-js.com/front/crud/crud.html](https://admin.cool-js.com/front/crud/crud.html)
 
-## Version
+## 版本
 
 -   1.3.2 cl-form 添加 validate, validateField 方法
 -   1.3.1 cl-form 调整 collapse 展示，label 添加 tooltips

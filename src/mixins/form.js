@@ -97,9 +97,9 @@ export default {
 		},
 
 		// Validate form 
-		validate(props) {
+		validate(callback) {
 			if (this.$refs['form']) {
-				this.$refs['form'].validate(props)
+				this.$refs['form'].validate(callback)
 			}
 		}
 	}
