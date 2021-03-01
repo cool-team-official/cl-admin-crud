@@ -75,17 +75,31 @@ export default {
 			});
 		},
 
-		// Clear form data
-		clearForm() {
+		// Reset form data
+		resetFields() {
 			if (this.$refs['form']) {
-				this.$refs["form"].clearValidate();
+				this.$refs['form'].resetFields()
 			}
 		},
 
-		// Reset form data
-		resetForm() {
+		// Clear form validate
+		clearValidate(props) {
 			if (this.$refs['form']) {
-				this.$refs['form'].resetFields()
+				return this.$refs['form'].clearValidate(props)
+			}
+		},
+
+		// Validate form-item field
+		validateField(props, callback) {
+			if (this.$refs['form']) {
+				this.$refs['form'].validateField(props, callback)
+			}
+		},
+
+		// Validate form 
+		validate(props) {
+			if (this.$refs['form']) {
+				this.$refs['form'].validate(props)
 			}
 		}
 	}

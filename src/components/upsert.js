@@ -290,14 +290,17 @@ export default {
 			const list = [
 				"getForm",
 				"setForm",
-				"clearForm",
 				"setData",
 				"setOptions",
 				"toggleItem",
 				"hiddenItem",
 				"showItem",
 				"showLoading",
-				"hiddenLoading"
+				"hiddenLoading",
+				"resetFields",
+				"clearValidate",
+				"validateField",
+				"validate",
 			];
 
 			list.forEach((n) => {

@@ -17,7 +17,7 @@ yarn add cl-admin-crud
 #### Browser
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/cl-admin-crud@1.3.0/dist/cl-admin-crud.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/cl-admin-crud@1.3.2/dist/cl-admin-crud.min.js"></script>
 ```
 
 ## Demo
@@ -33,6 +33,7 @@ yarn add cl-admin-crud
 
 ## Version
 
+-   1.3.2 cl-form 添加 validate, validateField 方法
 -   1.3.1 cl-form 调整 collapse 展示，label 添加 tooltips
 -   1.3.0 添加 cl-form-tabs 组件, cl-form 添加 group 分组显示
 -   1.2.6 添加 v-contextmenu 指令

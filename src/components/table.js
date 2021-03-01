@@ -197,7 +197,7 @@ export default {
 						const perm = getPermission(vnode);
 
 						if (perm) {
-							let clickEvent = () => {};
+							let clickEvent = () => { };
 							let buttonText = null;
 
 							switch (vnode) {
@@ -256,11 +256,11 @@ export default {
 											{slot ? (
 												slot({ scope })
 											) : (
-												<el-button plain size="mini">
-													{label || "更多操作"}
-													<i class="el-icon-arrow-down el-icon--right"></i>
-												</el-button>
-											)}
+													<el-button plain size="mini">
+														{label || "更多操作"}
+														<i class="el-icon-arrow-down el-icon--right"></i>
+													</el-button>
+												)}
 
 											<el-dropdown-menu
 												style={{ width }}
@@ -346,7 +346,7 @@ export default {
 			let cm =
 				this.contextMenu || (isEmpty(this.contextMenu) ? false : table["context-menu"]);
 
-			let buttons = ["check", "edit", "delete", "order-desc", "order-asc"];
+			let buttons = ["check", "edit", "delete", "order-asc", "order-desc"];
 			let enable = false;
 
 			if (cm) {

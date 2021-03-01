@@ -143,6 +143,8 @@ export default {
 		},
 
 		onClosed() {
+			this.tabActive = null;
+
 			for (let i in this.form) {
 				delete this.form[i];
 			}
@@ -153,7 +155,7 @@ export default {
 		},
 
 		clear() {
-			this.clearForm();
+			this.clearValidate();
 		},
 
 		submit() {
@@ -200,6 +202,10 @@ export default {
 		},
 
 		collapseItem(item) {
+			// Clear item validate
+			this.clearValidate(item.prop)
+
+			// Toggle
 			if (item.collapse !== undefined) {
 				item.collapse = !item.collapse;
 			}

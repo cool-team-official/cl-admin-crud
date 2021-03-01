@@ -109,7 +109,7 @@ export default {
 
 		// Reset data
 		reset() {
-			this.resetForm()
+			this.resetFields()
 			this.$emit("reset");
 		},
 
@@ -118,7 +118,7 @@ export default {
 			for (let i in this.form) {
 				this.form[i] = undefined
 			}
-			this.clearForm()
+			this.clearValidate()
 			this.$emit("clear");
 		},
 

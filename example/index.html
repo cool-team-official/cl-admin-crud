@@ -38,16 +38,16 @@
 						field="status"
 						:list="[
 							{
-								label: '上班',
+								label: '启用',
 								value: 1
 							},
 							{
-								label: '下班',
+								label: '禁用',
 								value: 0
 							}
 						]"
 					></cl-query>
-					<cl-filter label="工作状态">
+					<cl-filter label="状态">
 						<el-select
 							size="mini"
 							v-model="selects.status"
@@ -61,8 +61,8 @@
 							"
 						>
 							<el-option value="" label="全部"></el-option>
-							<el-option :value="0" label="下班"></el-option>
-							<el-option :value="1" label="上班"></el-option>
+							<el-option :value="0" label="禁用"></el-option>
+							<el-option :value="1" label="启用"></el-option>
 						</el-select>
 					</cl-filter>
 					<el-button size="mini" @click="openForm">自定义测试表单</el-button>
@@ -302,8 +302,8 @@
 							props: {
 								"context-menu": [
 									"check",
-									"order-desc",
 									"order-asc",
+									"order-desc",
 									"edit",
 									"delete",
 									{
@@ -345,18 +345,18 @@
 										"min-width": 120
 									},
 									{
-										label: "工作状态",
+										label: "状态",
 										prop: "status",
 										align: "center",
 										"min-width": 120,
 										dict: [
 											{
-												label: "上班",
+												label: "启用",
 												value: 1,
 												type: "primary"
 											},
 											{
-												label: "下班",
+												label: "禁用",
 												value: 0,
 												type: "danger"
 											}
@@ -496,19 +496,27 @@
 										}
 									},
 									{
-										label: "工作状态",
+										label: "公司",
+										prop: "company",
+										value: "cool",
+										group: "work",
+										component: {
+											name: "el-input"
+										}
+									},
+									{
+										label: "状态",
 										prop: "status",
 										value: 1,
-										group: "work",
 										component: {
 											name: "el-radio-group",
 											options: [
 												{
-													label: "上班",
+													label: "启用",
 													value: 1
 												},
 												{
-													label: "下班",
+													label: "禁用",
 													value: 0
 												}
 											]
@@ -558,17 +566,17 @@
 										}
 									},
 									{
-										label: "工作状态",
+										label: "状态",
 										prop: "status",
 										component: {
 											name: "el-radio-group",
 											options: [
 												{
-													label: "上班",
+													label: "启用",
 													value: 1
 												},
 												{
-													label: "下班",
+													label: "禁用",
 													value: 0
 												}
 											]
