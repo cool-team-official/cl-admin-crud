@@ -33,6 +33,7 @@ yarn add cl-admin-crud
 
 ## Version
 
+-   1.3.1 cl-form 调整 collapse 展示，label 添加 tooltips
 -   1.3.0 添加 cl-form-tabs 组件, cl-form 添加 group 分组显示
 -   1.2.6 添加 v-contextmenu 指令
 -   1.2.0 添加 cl-context-menu

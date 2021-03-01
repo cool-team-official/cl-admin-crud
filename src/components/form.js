@@ -1,4 +1,4 @@
-import { deepMerge, isFunction, isEmpty, cloneDeep } from "@/utils";
+import { deepMerge, isFunction, isEmpty, isString, isObject, isBoolean, cloneDeep } from "@/utils";
 import { renderNode } from "@/utils/vnode";
 import Parse from "@/utils/parse";
 import { Form, Emitter, Screen } from "@/mixins";
@@ -239,7 +239,20 @@ export default {
 							});
 
 							// Is group
-							e._group = isEmpty(this.tabActive) ? true : e.group === this.tabActive;
+							e._group = (isEmpty(this.tabActive) || isEmpty(e.group)) ? true : e.group === this.tabActive;
+
+							// Parse label
+							if (isString(e.label)) {
+								e._label = {
+									text: e.label
+								}
+							} else if (isObject(e.label)) {
+								e._label = e.label
+							} else {
+								e._label = {
+									text: ''
+								}
+							}
 
 							return (
 								e._group &&
@@ -257,7 +270,7 @@ export default {
 											<el-form-item
 												{...{
 													props: {
-														label: e.label,
+														label: e._label.text,
 														prop: e.prop,
 														rules: e.rules,
 														...e.props
@@ -265,12 +278,14 @@ export default {
 												}}>
 												{/* Redefine label */}
 												<template slot="label">
-													<span
-														on-click={() => {
-															this.collapseItem(e);
-														}}>
-														{e.label}
-													</span>
+													<el-tooltip effect="dark" placement="top" content={e._label.tip} disabled={!e._label.tip}>
+														<span>
+															{e._label.text}
+															{
+																e._label.icon && <i class={e._label.icon}></i>
+															}
+														</span>
+													</el-tooltip>
 												</template>
 
 												{/* Form item */}
@@ -281,6 +296,7 @@ export default {
 															return (
 																e[name] && (
 																	<div
+																		v-show={!e.collapse}
 																		class={[
 																			`cl-form-item__${name}`,
 																			{
@@ -291,7 +307,7 @@ export default {
 																					: e.flex
 																			}
 																		]}
-																		v-show={!e.collapse}>
+																	>
 																		{renderNode(e[name], {
 																			prop: e.prop,
 																			scope: this.form,
@@ -303,20 +319,34 @@ export default {
 															);
 														}
 													)}
-
-													{/* Collapse button */}
+												</div>
+												{/* Collapse button */}
+												{
+													isBoolean(e.collapse) &&
 													<div
 														class="cl-form-item__collapse"
-														v-show={e.collapse}
 														on-click={() => {
 															this.collapseItem(e);
 														}}>
 														<el-divider content-position="center">
-															点击展开，查看更多
-															<i class="el-icon-arrow-down"></i>
+															{
+																e.collapse
+																	? (
+																		<span>
+																			点击展开，查看更多
+																			<i class="el-icon-arrow-down"></i>
+																		</span>
+																	)
+																	: (
+																		<span>
+																			点击收起，隐藏内容
+																			<i class="el-icon-arrow-up"></i>
+																		</span>
+																	)
+															}
 														</el-divider>
 													</div>
-												</div>
+												}
 											</el-form-item>
 										)}
 									</el-col>
@@ -335,48 +365,48 @@ export default {
 			return hidden
 				? null
 				: buttons.map((vnode) => {
-						if (vnode == "save") {
-							return (
-								<el-button
-									{...{
-										props: {
-											size,
-											type: "success",
-											disabled: this.loading,
-											loading: this.saving
-										},
-										on: {
-											click: () => {
-												this.submit();
-											}
+					if (vnode == "save") {
+						return (
+							<el-button
+								{...{
+									props: {
+										size,
+										type: "success",
+										disabled: this.loading,
+										loading: this.saving
+									},
+									on: {
+										click: () => {
+											this.submit();
 										}
-									}}>
-									{saveButtonText}
-								</el-button>
-							);
-						} else if (vnode == "close") {
-							return (
-								<el-button
-									{...{
-										props: {
-											size
-										},
-										on: {
-											click: () => {
-												this.beforeClose();
-											}
+									}
+								}}>
+								{saveButtonText}
+							</el-button>
+						);
+					} else if (vnode == "close") {
+						return (
+							<el-button
+								{...{
+									props: {
+										size
+									},
+									on: {
+										click: () => {
+											this.beforeClose();
 										}
-									}}>
-									{closeButtonText}
-								</el-button>
-							);
-						} else {
-							return renderNode(vnode, {
-								scope: this.form,
-								$scopedSlots: this.$scopedSlots
-							});
-						}
-				  });
+									}
+								}}>
+								{closeButtonText}
+							</el-button>
+						);
+					} else {
+						return renderNode(vnode, {
+							scope: this.form,
+							$scopedSlots: this.$scopedSlots
+						});
+					}
+				});
 		}
 	},
 

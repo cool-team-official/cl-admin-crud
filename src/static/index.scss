@@ -219,6 +219,14 @@
 				background-color: transparent;
 			}
 		}
+
+		&__label {
+			.el-tooltip {
+				i {
+					margin-left: 5px;
+				}
+			}
+		}
 	}
 
 	&-item {
@@ -272,6 +280,7 @@
 .cl-form-tabs {
 	margin-bottom: 20px;
 	border-bottom: 1px solid #ccc;
+	position: relative;
 
 	ul {
 		display: flex;
@@ -282,14 +291,16 @@
 			height: 35px;
 			line-height: 35px;
 			cursor: pointer;
-			color: #999;
-
-			&:hover,
-			&.is-active {
-				background-color: #f7f7f7;
-				color: #000;
-			}
 		}
+	}
+
+	&__line {
+		height: 2px;
+		width: 100%;
+		position: absolute;
+		bottom: -1px;
+		left: 0;
+		transition: transform 0.3s ease-in-out, width 0.2s 0.1s cubic-bezier(0.645, 0.045, 0.355, 1);
 	}
 }
 
