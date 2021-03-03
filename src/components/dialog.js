@@ -333,7 +333,7 @@ export default {
 					props: {
 						width: this.width,
 						...this.props,
-						fullscreen: this.isFullscreen ? true : this.props.fullscreen,
+						fullscreen: this.isMobile ? true : this.props.fullscreen,
 						visible: this.visible,
 						"show-close": false,
 						"custom-class": `cl-dialog ${this.props.customClass || ""}`

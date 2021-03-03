@@ -138,10 +138,4 @@ export function getInstance(component) {
 	})
 }
 
-export function appendToBody(component, callback) {
-	const instance = getInstance(component)
-	document.body.appendChild(instance.$el);
-	callback(instance)
-}
-
 export { cloneDeep, flat };

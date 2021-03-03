@@ -6,9 +6,9 @@ export default {
     },
 
     computed: {
-        isFullscreen() {
+        isMobile() {
             return this.screen === 'xs'
-        }
+        },
     },
 
     created() {

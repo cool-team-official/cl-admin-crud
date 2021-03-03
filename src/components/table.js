@@ -1,13 +1,13 @@
 import { renderNode } from "@/utils/vnode";
 import { isNull, isArray, isEmpty } from "@/utils";
-import { Emitter } from "@/mixins";
+import { Emitter, Screen } from "@/mixins";
 import { isFunction } from "../utils";
 
 export default {
 	name: "cl-table",
 	componentName: "ClTable",
 	inject: ["crud"],
-	mixins: [Emitter],
+	mixins: [Emitter, Screen],
 	props: {
 		columns: {
 			type: Array,
@@ -237,6 +237,7 @@ export default {
 							label: "操作",
 							width: "160px",
 							align: "center",
+							fixed: this.isMobile ? null : 'right',
 							...item
 						},
 						scopedSlots: {

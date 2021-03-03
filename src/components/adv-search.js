@@ -153,7 +153,7 @@ export default {
 						props: {
 							size: "small",
 							"label-width": "100px",
-							'label-position': this.isFullscreen ? 'top' : '',
+							'label-position': this.isMobile ? 'top' : '',
 							disabled: this.saving,
 							model: this.form,
 							...this.props
@@ -218,7 +218,7 @@ export default {
 							visible: this.visible,
 							title: "高级搜索",
 							direction: "rtl",
-							size: this.isFullscreen ? '100%' : "500px",
+							size: this.isMobile ? '100%' : "500px",
 							...this.props
 						},
 						on: {

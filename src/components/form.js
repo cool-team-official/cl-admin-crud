@@ -220,7 +220,7 @@ export default {
 					class="cl-form"
 					{...{
 						props: {
-							"label-position": this.isFullscreen ? "top" : "",
+							"label-position": this.isMobile ? "top" : "",
 							disabled: this.saving,
 							model: this.form,
 							...props
