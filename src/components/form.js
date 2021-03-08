@@ -1,7 +1,7 @@
 import { deepMerge, isFunction, isEmpty, isString, isObject, isBoolean, cloneDeep } from "@/utils";
 import { renderNode } from "@/utils/vnode";
 import Parse from "@/utils/parse";
-import valueHook from '@/hook/value'
+import valueHook from "@/hook/value";
 import { Form, Emitter, Screen } from "@/mixins";
 import { __inst } from "@/store";
 
@@ -109,7 +109,11 @@ export default {
 			this.conf.items.map((e) => {
 				if (e.prop) {
 					// Priority use form data
-					this.$set(this.form, e.prop, valueHook.bind(this.form[e.prop] || cloneDeep(e.value), e.hook, this.form));
+					this.$set(
+						this.form,
+						e.prop,
+						valueHook.bind(this.form[e.prop] || cloneDeep(e.value), e.hook, this.form)
+					);
 				}
 			});
 
@@ -180,7 +184,13 @@ export default {
 							if (e._hidden) {
 								delete d[e.prop];
 							}
+
+							if (e.hook) {
+								d[e.prop] = valueHook.submit(d[e.prop], e.hook, d);
+							}
 						});
+
+						console.log(d);
 
 						submit(d, {
 							done: this.done,
@@ -204,7 +214,7 @@ export default {
 
 		collapseItem(item) {
 			// Clear item validate
-			this.clearValidate(item.prop)
+			this.clearValidate(item.prop);
 
 			// Toggle
 			if (item.collapse !== undefined) {
@@ -246,19 +256,22 @@ export default {
 							});
 
 							// Is group
-							e._group = (isEmpty(this.tabActive) || isEmpty(e.group)) ? true : e.group === this.tabActive;
+							e._group =
+								isEmpty(this.tabActive) || isEmpty(e.group)
+									? true
+									: e.group === this.tabActive;
 
 							// Parse label
 							if (isString(e.label)) {
 								e._label = {
 									text: e.label
-								}
+								};
 							} else if (isObject(e.label)) {
-								e._label = e.label
+								e._label = e.label;
 							} else {
 								e._label = {
-									text: ''
-								}
+									text: ""
+								};
 							}
 
 							return (
@@ -285,12 +298,16 @@ export default {
 												}}>
 												{/* Redefine label */}
 												<template slot="label">
-													<el-tooltip effect="dark" placement="top" content={e._label.tip} disabled={!e._label.tip}>
+													<el-tooltip
+														effect="dark"
+														placement="top"
+														content={e._label.tip}
+														disabled={!e._label.tip}>
 														<span>
 															{e._label.text}
-															{
-																e._label.icon && <i class={e._label.icon}></i>
-															}
+															{e._label.icon && (
+																<i class={e._label.icon}></i>
+															)}
 														</span>
 													</el-tooltip>
 												</template>
@@ -313,8 +330,7 @@ export default {
 																					? true
 																					: e.flex
 																			}
-																		]}
-																	>
+																		]}>
 																		{renderNode(e[name], {
 																			prop: e.prop,
 																			scope: this.form,
@@ -328,32 +344,27 @@ export default {
 													)}
 												</div>
 												{/* Collapse button */}
-												{
-													isBoolean(e.collapse) &&
+												{isBoolean(e.collapse) && (
 													<div
 														class="cl-form-item__collapse"
 														on-click={() => {
 															this.collapseItem(e);
 														}}>
 														<el-divider content-position="center">
-															{
-																e.collapse
-																	? (
-																		<span>
-																			查看更多
-																			<i class="el-icon-arrow-down"></i>
-																		</span>
-																	)
-																	: (
-																		<span>
-																			隐藏内容
-																			<i class="el-icon-arrow-up"></i>
-																		</span>
-																	)
-															}
+															{e.collapse ? (
+																<span>
+																	查看更多
+																	<i class="el-icon-arrow-down"></i>
+																</span>
+															) : (
+																<span>
+																	隐藏内容
+																	<i class="el-icon-arrow-up"></i>
+																</span>
+															)}
 														</el-divider>
 													</div>
-												}
+												)}
 											</el-form-item>
 										)}
 									</el-col>
@@ -372,48 +383,48 @@ export default {
 			return hidden
 				? null
 				: buttons.map((vnode) => {
-					if (vnode == "save") {
-						return (
-							<el-button
-								{...{
-									props: {
-										size,
-										type: "success",
-										disabled: this.loading,
-										loading: this.saving
-									},
-									on: {
-										click: () => {
-											this.submit();
+						if (vnode == "save") {
+							return (
+								<el-button
+									{...{
+										props: {
+											size,
+											type: "success",
+											disabled: this.loading,
+											loading: this.saving
+										},
+										on: {
+											click: () => {
+												this.submit();
+											}
 										}
-									}
-								}}>
-								{saveButtonText}
-							</el-button>
-						);
-					} else if (vnode == "close") {
-						return (
-							<el-button
-								{...{
-									props: {
-										size
-									},
-									on: {
-										click: () => {
-											this.beforeClose();
+									}}>
+									{saveButtonText}
+								</el-button>
+							);
+						} else if (vnode == "close") {
+							return (
+								<el-button
+									{...{
+										props: {
+											size
+										},
+										on: {
+											click: () => {
+												this.beforeClose();
+											}
 										}
-									}
-								}}>
-								{closeButtonText}
-							</el-button>
-						);
-					} else {
-						return renderNode(vnode, {
-							scope: this.form,
-							$scopedSlots: this.$scopedSlots
-						});
-					}
-				});
+									}}>
+									{closeButtonText}
+								</el-button>
+							);
+						} else {
+							return renderNode(vnode, {
+								scope: this.form,
+								$scopedSlots: this.$scopedSlots
+							});
+						}
+				  });
 		}
 	},
 

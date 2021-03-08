@@ -192,14 +192,12 @@ export default {
 			const render = (scope) => {
 				// Use op button list
 				return (item.buttons || ["update", "delete"]).map((vnode) => {
-					if (vnode === "update" || vnode === 'edit') {
+					if (vnode === "update" || vnode === "edit") {
 						return (
 							<el-button
 								size="mini"
 								type="text"
-								v-show={getPermission(
-									"update"
-								)}
+								v-show={getPermission("update")}
 								on-click={() => {
 									rowEdit(scope.row);
 								}}>
@@ -211,9 +209,7 @@ export default {
 							<el-button
 								size="mini"
 								type="text"
-								v-show={getPermission(
-									"delete"
-								)}
+								v-show={getPermission("delete")}
 								on-click={() => {
 									rowDelete(scope.row);
 								}}>
@@ -233,7 +229,7 @@ export default {
 							label: "操作",
 							width: "160px",
 							align: "center",
-							fixed: this.isMobile ? null : 'right',
+							fixed: this.isMobile ? null : "right",
 							...item
 						},
 						scopedSlots: {
@@ -253,11 +249,11 @@ export default {
 											{slot ? (
 												slot({ scope })
 											) : (
-													<el-button plain size="mini">
-														{label || "更多操作"}
-														<i class="el-icon-arrow-down el-icon--right"></i>
-													</el-button>
-												)}
+												<el-button plain size="mini">
+													{label || "更多操作"}
+													<i class="el-icon-arrow-down el-icon--right"></i>
+												</el-button>
+											)}
 
 											<el-dropdown-menu
 												style={{ width }}
@@ -343,7 +339,7 @@ export default {
 			let cm =
 				this.contextMenu || (isEmpty(this.contextMenu) ? false : table["context-menu"]);
 
-			let buttons = ['refresh', "check", "edit", "delete", "order-asc", "order-desc"];
+			let buttons = ["refresh", "check", "edit", "delete", "order-asc", "order-desc"];
 			let enable = false;
 
 			if (cm) {
@@ -360,14 +356,14 @@ export default {
 				let list = buttons
 					.map((e) => {
 						switch (e) {
-							case 'refresh':
+							case "refresh":
 								return {
-									label: '刷新',
+									label: "刷新",
 									callback: (_, done) => {
-										refresh()
-										done()
+										refresh();
+										done();
 									}
-								}
+								};
 							case "edit":
 							case "update":
 								return {
