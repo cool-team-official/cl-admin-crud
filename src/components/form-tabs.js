@@ -39,21 +39,34 @@ export default {
 				let index = this.list.findIndex(e => e.value === val)
 				let item = this.$refs[`tab-${index}`]
 
+				// 下划线位置
 				this.line = {
 					width: item.clientWidth + 'px',
 					transform: `translateX(${item.offsetLeft}px)`,
 					'background-color': this.color
 				}
+
+				// 靠左位置
+				let left = item.offsetLeft + (item.clientWidth - document.body.clientWidth) / 2 + 15;
+
+				if (left < 0) {
+					left = 0;
+				}
+
+				// 设置滚动距离
+				this.$refs.tabs.scrollLeft = left
 			})
 
 			this.active = val;
+
 			this.$emit("input", val);
+			this.$emit("change", val);
 		}
 	},
 	render() {
 		return (
 			<div class="cl-form-tabs">
-				<ul style={{ "justify-content": this.justify }}>
+				<ul style={{ "text-align": this.justify }} ref="tabs">
 					{this.list.map((e, i) => {
 						return (
 							<li
@@ -71,9 +84,9 @@ export default {
 							</li>
 						);
 					})}
-				</ul>
 
-				{this.line.width && <div class="cl-form-tabs__line" style={this.line}></div>}
+					{this.line.width && <div class="cl-form-tabs__line" style={this.line}></div>}
+				</ul>
 			</div>
 		);
 	}

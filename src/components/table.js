@@ -183,7 +183,7 @@ export default {
 		},
 
 		renderOp(item) {
-			const { rowEdit, rowDelete, getPermission } = this.crud;
+			const { rowEdit, rowDelete, getPermission, dict } = this.crud;
 
 			if (!item) {
 				return null;
@@ -191,40 +191,36 @@ export default {
 
 			const render = (scope) => {
 				// Use op button list
-				return (item.buttons || ["edit", "delete"]).map((vnode) => {
-					if (["edit", "update", "delete"].includes(vnode)) {
-						// Get permission
-						const perm = getPermission(vnode);
-
-						if (perm) {
-							let clickEvent = () => { };
-							let buttonText = null;
-
-							switch (vnode) {
-								case "edit":
-								case "update":
-									clickEvent = rowEdit;
-									buttonText = this.crud.dict.label.update;
-									break;
-								case "delete":
-									clickEvent = rowDelete;
-									buttonText = this.crud.dict.label.delete;
-									break;
-							}
-
-							return (
-								<el-button
-									size="mini"
-									type="text"
-									on-click={() => {
-										clickEvent(scope.row);
-									}}>
-									{buttonText}
-								</el-button>
-							);
-						}
+				return (item.buttons || ["update", "delete"]).map((vnode) => {
+					if (vnode === "update" || vnode === 'edit') {
+						return (
+							<el-button
+								size="mini"
+								type="text"
+								v-show={getPermission(
+									"update"
+								)}
+								on-click={() => {
+									rowEdit(scope.row);
+								}}>
+								{dict.label.update}
+							</el-button>
+						);
+					} else if (vnode === "delete") {
+						return (
+							<el-button
+								size="mini"
+								type="text"
+								v-show={getPermission(
+									"delete"
+								)}
+								on-click={() => {
+									rowDelete(scope.row);
+								}}>
+								{dict.label.delete}
+							</el-button>
+						);
 					} else {
-						// Use custom render
 						return renderNode(vnode, { scope, $scopedSlots: this.$scopedSlots });
 					}
 				});
@@ -341,13 +337,13 @@ export default {
 		},
 
 		onRowContextMenu(row, column, event) {
-			const { rowEdit, rowDelete, getPermission, selection, table = {} } = this.crud;
+			const { refresh, rowEdit, rowDelete, getPermission, selection, table = {} } = this.crud;
 
 			// context-menu conf
 			let cm =
 				this.contextMenu || (isEmpty(this.contextMenu) ? false : table["context-menu"]);
 
-			let buttons = ["check", "edit", "delete", "order-asc", "order-desc"];
+			let buttons = ['refresh', "check", "edit", "delete", "order-asc", "order-desc"];
 			let enable = false;
 
 			if (cm) {
@@ -364,12 +360,20 @@ export default {
 				let list = buttons
 					.map((e) => {
 						switch (e) {
+							case 'refresh':
+								return {
+									label: '刷新',
+									callback: (_, done) => {
+										refresh()
+										done()
+									}
+								}
 							case "edit":
 							case "update":
 								return {
 									label: "编辑",
 									hidden: !getPermission("update"),
-									callback: (e, done) => {
+									callback: (_, done) => {
 										rowEdit(row);
 										done();
 									}
@@ -378,7 +382,7 @@ export default {
 								return {
 									label: "删除",
 									hidden: !getPermission("delete"),
-									callback: (item, done) => {
+									callback: (_, done) => {
 										rowDelete(row);
 										done();
 									}
@@ -391,7 +395,7 @@ export default {
 									hidden: !Boolean(
 										this.columns.find((e) => e.type === "selection")
 									),
-									callback: (item, done) => {
+									callback: (_, done) => {
 										this.toggleRowSelection(row);
 										done();
 									}
@@ -400,7 +404,7 @@ export default {
 								return {
 									label: `${column.label} - 降序`,
 									hidden: !column.sortable,
-									callback: (item, done) => {
+									callback: (_, done) => {
 										this.changeSort(column.property, "desc");
 										done();
 									}
@@ -409,7 +413,7 @@ export default {
 								return {
 									label: `${column.label} - 升序`,
 									hidden: !column.sortable,
-									callback: (item, done) => {
+									callback: (_, done) => {
 										this.changeSort(column.property, "asc");
 										done();
 									}

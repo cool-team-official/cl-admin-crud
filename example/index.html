@@ -301,6 +301,7 @@
 
 							props: {
 								"context-menu": [
+									"refresh",
 									"check",
 									"order-asc",
 									"order-desc",
@@ -691,6 +692,51 @@
 								qs: [1]
 							},
 							items: [
+								{
+									props: {
+										"label-width": "0px"
+									},
+									component: ({ h }) => {
+										return h(
+											"el-divider",
+											{
+												props: {
+													"content-position": "left"
+												}
+											},
+											"测试数据通道"
+										);
+									}
+								},
+								{
+									label: "split, number",
+									prop: "name",
+									value: "1,2,3",
+									hook: {
+										bind: ["split", "number"],
+										submit: ["join"]
+									},
+									component: {
+										name: "el-select",
+										options: [
+											{
+												label: "李逍遥",
+												value: 1
+											},
+											{
+												label: "景天",
+												value: 2
+											},
+											{
+												label: "梅长苏",
+												value: 3
+											}
+										],
+										props: {
+											multiple: true
+										}
+									}
+								},
 								{
 									props: {
 										"label-width": "0px"

@@ -42,7 +42,9 @@ const parse_jsx = (vnode, options = {}) => {
 		"slot",
 		"key",
 		"ref",
-		"refInFor"
+		"refInFor",
+		// Extends
+		"pipe"
 	];
 
 	// Avoid loop update
@@ -64,7 +66,7 @@ const parse_jsx = (vnode, options = {}) => {
 		}
 
 		// Set default value
-		data.attrs.value = scope[prop];
+		data.attrs.value = scope[prop]
 		// Add input event
 		data.on.input = (val) => {
 			__inst.$set(scope, prop, val);

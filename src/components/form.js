@@ -1,6 +1,7 @@
 import { deepMerge, isFunction, isEmpty, isString, isObject, isBoolean, cloneDeep } from "@/utils";
 import { renderNode } from "@/utils/vnode";
 import Parse from "@/utils/parse";
+import valueHook from '@/hook/value'
 import { Form, Emitter, Screen } from "@/mixins";
 import { __inst } from "@/store";
 
@@ -108,7 +109,7 @@ export default {
 			this.conf.items.map((e) => {
 				if (e.prop) {
 					// Priority use form data
-					this.$set(this.form, e.prop, this.form[e.prop] || cloneDeep(e.value));
+					this.$set(this.form, e.prop, valueHook.bind(this.form[e.prop] || cloneDeep(e.value), e.hook, this.form));
 				}
 			});
 
@@ -339,13 +340,13 @@ export default {
 																e.collapse
 																	? (
 																		<span>
-																			点击展开，查看更多
+																			查看更多
 																			<i class="el-icon-arrow-down"></i>
 																		</span>
 																	)
 																	: (
 																		<span>
-																			点击收起，隐藏内容
+																			隐藏内容
 																			<i class="el-icon-arrow-up"></i>
 																		</span>
 																	)

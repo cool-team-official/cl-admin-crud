@@ -279,12 +279,24 @@
 .cl-form-tabs {
 	margin-bottom: 20px;
 	border-bottom: 1px solid #ccc;
-	position: relative;
+	overflow: hidden;
+	width: 100%;
 
 	ul {
-		display: flex;
+		height: 35px;
+		width: 100%;
+		overflow-x: auto;
+		white-space: nowrap;
+		position: relative;
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
 
 		li {
+			display: inline-block;
 			list-style: none;
 			padding: 0 20px;
 			height: 35px;
