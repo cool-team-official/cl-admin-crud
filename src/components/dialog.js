@@ -19,14 +19,14 @@ export default {
 			type: Boolean,
 			default: true
 		},
-		// el-dialog attributes
+		// el-dialog 参数
 		props: {
 			type: Object,
 			default: () => {
 				return {};
 			}
 		},
-		// el-dialog event
+		// el-dialog 事件
 		on: {
 			type: Object,
 			default: () => {

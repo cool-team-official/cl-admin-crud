@@ -35,13 +35,10 @@ export default {
 		},
 		// 打开前钩子 { data, { next } }
 		onOpen: Function,
-		beforeOpen: Function,
 		// 关闭前钩子 { done }
 		onClose: Function,
-		beforeClose: Function,
 		// 搜索时钩子 { data, { next, close } }
-		onSearch: Function,
-		beforeSearch: Function
+		onSearch: Function
 	},
 	data() {
 		return {
@@ -87,11 +84,8 @@ export default {
 				this.$emit("open", this.form);
 			};
 
-			// 钩子处理
-			const hook = this.beforeClose || this.onOpen
-
-			if (hook) {
-				hook(this.form, { next });
+			if (this.onOpen) {
+				this.onOpen(this.form, { next });
 			} else {
 				next(null);
 			}
@@ -105,10 +99,8 @@ export default {
 				this.$emit("close");
 			};
 
-			const hook = this.beforeClose || this.onClose
-
-			if (hook) {
-				hook(done);
+			if (this.onClose) {
+				this.onClose(done);
 			} else {
 				done();
 			}
@@ -143,10 +135,8 @@ export default {
 				this.close();
 			};
 
-			const hook = this.beforeSearch || this.onSearch
-
-			if (hook) {
-				hook(params, { next, close: this.close });
+			if (this.onSearch) {
+				this.onSearch(params, { next, close: this.close });
 			} else {
 				next(params);
 			}

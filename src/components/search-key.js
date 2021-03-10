@@ -26,8 +26,7 @@ export default {
 			default: '250px'
 		},
 		// 搜索时钩子
-		onSearch: Function,
-		beforeSearch: Function
+		onSearch: Function
 	},
 	data() {
 		return {
@@ -81,11 +80,8 @@ export default {
 				});
 			};
 
-			// 钩子处理
-			const hook = this.beforeSearch || this.onSearch
-
-			if (hook) {
-				hook(params, { next });
+			if (this.onSearch) {
+				this.onSearch(params, { next });
 			} else {
 				next();
 			}

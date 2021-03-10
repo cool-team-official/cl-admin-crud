@@ -16,10 +16,8 @@ export default {
 		border: Boolean,
 		// 删除钩子 { selection, { next } }
 		onDelete: Function,
-		beforeDelete: Function,
 		// 刷新钩子 { params, { next, done, render } }
 		onRefresh: Function,
-		beforeRefresh: Function,
 	},
 
 	mixins: [Emitter],
@@ -101,16 +99,16 @@ export default {
 	},
 
 	mounted() {
-		// Merge crud data
+		// 合并全局配置
 		const res = bootstrap(deepMerge(this, __crud));
 
 		// Loaded
 		this.$emit("load", res);
 
-		// Bind event
+		// 绑定自定义事件
 		this.bindEvent(res)
 
-		// Window onresize
+		// 窗口事件
 		window.removeEventListener("resize", function () { });
 		window.addEventListener("resize", () => {
 			this.doLayout();
@@ -118,7 +116,7 @@ export default {
 	},
 
 	methods: {
-		// Get service permission
+		// 获取权限
 		getPermission(key) {
 			switch (key) {
 				case "edit":
@@ -129,12 +127,12 @@ export default {
 			}
 		},
 
-		// Get params
+		// 获取参数
 		getParams() {
 			return this.params
 		},
 
-		// Bind event
+		// 绑定自定义事件
 		bindEvent(res) {
 			for (let i in __crud.event) {
 				let event = __crud.event[i];
@@ -163,36 +161,36 @@ export default {
 			}
 		},
 
-		// Upsert add
+		// 新增
 		rowAdd() {
 			this.broadcast("cl-upsert", "crud.add");
 		},
 
-		// Upsert edit
+		// 编辑
 		rowEdit(data) {
 			this.broadcast("cl-upsert", "crud.edit", data);
 		},
 
-		// Upsert append
+		// 追加
 		rowAppend(data) {
 			this.broadcast("cl-upsert", "crud.append", data);
 		},
 
-		// Upsert close
+		// 关闭
 		rowClose() {
 			this.broadcast("cl-upsert", "crud.close");
 		},
 
-		// Row delete
+		// 删除
 		rowDelete(...selection) {
-			// Get request function
+			// 获取请求方法
 			const reqName = this.dict.api.delete;
 
 			let params = {
 				ids: selection.map((e) => e.id)
 			};
 
-			// Delete
+			// 删除事件
 			const next = (params) => {
 				return new Promise((resolve, reject) => {
 					this.$confirm(`此操作将永久删除选中数据，是否继续？`, "提示", {
@@ -222,31 +220,29 @@ export default {
 				});
 			};
 
-			const hook = this.beforeDelete || this.onDelete
-
-			if (hook) {
-				hook(selection, { next });
+			if (this.onDelete) {
+				this.onDelete(selection, { next });
 			} else {
 				next(params);
 			}
 		},
 
-		// Multi delete
+		// 批量删除
 		deleteMulti() {
 			this.rowDelete.apply(this, this.selection || []);
 		},
 
-		// Open advSearch
+		// 打开高级搜索
 		openAdvSearch() {
 			this.broadcast("cl-adv-search", "crud.open");
 		},
 
-		// close advSearch
+		// 关闭高级搜素
 		closeAdvSearch() {
 			this.broadcast("cl-adv-search", "crud.close");
 		},
 
-		// Refresh params replace
+		// 替换参数值
 		paramsReplace(params) {
 			const { pagination, search, sort } = this.dict;
 			let a = { ...params };
@@ -273,7 +269,7 @@ export default {
 			return a;
 		},
 
-		// Service refresh
+		// 刷新请求
 		refresh(newParams = {}) {
 			// 设置参数
 			let params = this.paramsReplace(Object.assign(this.params, newParams));
@@ -335,22 +331,20 @@ export default {
 				});
 			};
 
-			const hook = this.beforeRefresh || this.onRefresh
-
-			if (hook) {
-				return hook(params, { next, done, render });
+			if (this.onRefresh) {
+				return this.onRefresh(params, { next, done, render });
 			} else {
 				return next(params);
 			}
 		},
 
-		// Layout again
+		// 重新渲染布局
 		doLayout() {
 			this.broadcast("cl-table", "resize");
 		},
 
+		// 完成渲染
 		done() {
-			// Done render
 			this.test.process = true;
 		}
 	},

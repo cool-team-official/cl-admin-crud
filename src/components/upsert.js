@@ -31,16 +31,12 @@ export default {
 		dialog: Object,
 		// 打开前钩子 { isEdit, data, { submit, done, close } }
 		onOpen: Function,
-		beforeOpen: Function,
 		// 关闭前钩子 { action, done }
 		onClose: Function,
-		beforeClose: Function,
 		// 获取详情前钩子 { data, { next, done, close } }
 		onInfo: Function,
-		beforeInfo: Function,
 		// 提交前钩子 { isEdit, data, { next, done, close } }
-		onSubmit: Function,
-		beforeSubmit: Function,
+		onSubmit: Function
 	},
 	data() {
 		return {
@@ -157,11 +153,8 @@ export default {
 				});
 			};
 
-			// 钩子处理
-			const hook = this.beforeInfo || this.onInfo;
-
-			if (hook) {
-				hook(data, {
+			if (this.onInfo) {
+				this.onInfo(data, {
 					next,
 					done: (data) => {
 						done(data);
@@ -186,10 +179,8 @@ export default {
 					},
 					on: {
 						open: (_, { done, close }) => {
-							const hook = this.beforeOpen || this.onOpen
-
-							if (hook) {
-								hook(this.isEdit, this.form, {
+							if (this.onOpen) {
+								this.onOpen(this.isEdit, this.form, {
 									submit: () => {
 										this.submit(this.form);
 									},
@@ -201,10 +192,8 @@ export default {
 							resolve();
 						},
 						close: () => {
-							const hook = this.beforeClose || this.onClose;
-
-							if (hook) {
-								hook(this.close);
+							if (this.onClose) {
+								this.onClose(this.close);
 							} else {
 								this.close();
 							}
@@ -270,10 +259,8 @@ export default {
 			};
 
 			// 钩子处理
-			const hook = this.beforeSubmit || this.onSubmit
-
-			if (hook) {
-				hook(this.isEdit, data, {
+			if (this.onSubmit) {
+				this.onSubmit(this.isEdit, data, {
 					done,
 					next,
 					close: () => {
