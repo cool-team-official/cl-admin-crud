@@ -10,10 +10,16 @@ export default {
 	componentName: "ClCrud",
 
 	props: {
+		// 别称
 		name: String,
+		// 是否带有边框
 		border: Boolean,
+		// 删除钩子 { selection, { next } }
 		onDelete: Function,
-		onRefresh: Function
+		beforeDelete: Function,
+		// 刷新钩子 { params, { next, done, render } }
+		onRefresh: Function,
+		beforeRefresh: Function,
 	},
 
 	mixins: [Emitter],
@@ -216,8 +222,10 @@ export default {
 				});
 			};
 
-			if (this.onDelete) {
-				this.onDelete(selection, { next });
+			const hook = this.beforeDelete || this.onDelete
+
+			if (hook) {
+				hook(selection, { next });
 			} else {
 				next(params);
 			}
@@ -327,8 +335,10 @@ export default {
 				});
 			};
 
-			if (this.onRefresh) {
-				return this.onRefresh(params, { next, done, render });
+			const hook = this.beforeRefresh || this.onRefresh
+
+			if (hook) {
+				return hook(params, { next, done, render });
 			} else {
 				return next(params);
 			}

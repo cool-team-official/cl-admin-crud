@@ -26,6 +26,7 @@
 
 ## 版本
 
+-   1.4.2 cl-table 添加列设置、隐藏、显示方法
 -   1.4.0 cl-form 添加 hook
 -   1.3.4 cl-table type="op" 浮动添加 pc / 移动端 兼容
 -   1.3.2 cl-form 添加 validate, validateField 方法

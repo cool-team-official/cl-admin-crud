@@ -9,36 +9,39 @@ export default {
 	inject: ["crud"],
 	mixins: [Emitter, Screen, Form],
 	props: {
-		// Bind value
+		// 表单值
 		value: {
 			type: Object,
 			default: () => {
 				return {};
 			}
 		},
-		// Form items
+		// 表单项
 		items: {
 			type: Array,
 			default: () => []
 		},
-		// el-drawer props
+		// el-drawer 参数
 		props: {
 			type: Object,
 			default: () => {
 				return {};
 			}
 		},
-		// Op button ['search', 'reset', 'clear', 'close']
+		// 操作按钮 ['search', 'reset', 'clear', 'close']
 		opList: {
 			type: Array,
 			default: () => ["close", "search"]
 		},
-		// Hooks by open { data, { next } }
+		// 打开前钩子 { data, { next } }
 		onOpen: Function,
-		// Hooks by close { done }
+		beforeOpen: Function,
+		// 关闭前钩子 { done }
 		onClose: Function,
-		// Hooks by search { data, { next, close } }
-		onSearch: Function
+		beforeClose: Function,
+		// 搜索时钩子 { data, { next, close } }
+		onSearch: Function,
+		beforeSearch: Function
 	},
 	data() {
 		return {
@@ -65,7 +68,7 @@ export default {
 		this.$on("crud.close", this.close);
 	},
 	methods: {
-		// Open drawer
+		// 打开
 		open() {
 			this.items.map((e) => {
 				if (this.form[e.prop] === undefined) {
@@ -73,47 +76,51 @@ export default {
 				}
 			});
 
-			// Open event
+			// 打开事件
 			const next = (data) => {
 				this.visible = true;
 
 				if (data) {
-					// Merge data
 					Object.assign(this.form, data);
 				}
 
 				this.$emit("open", this.form);
 			};
 
-			if (this.onOpen) {
-				this.onOpen(this.form, { next });
+			// 钩子处理
+			const hook = this.beforeClose || this.onOpen
+
+			if (hook) {
+				hook(this.form, { next });
 			} else {
 				next(null);
 			}
 		},
 
-		// Close drawer
+		// 关闭
 		close() {
-			// Close event
+			// 关闭事件
 			const done = () => {
 				this.visible = false;
 				this.$emit("close");
 			};
 
-			if (this.onClose) {
-				this.onClose(done);
+			const hook = this.beforeClose || this.onClose
+
+			if (hook) {
+				hook(done);
 			} else {
 				done();
 			}
 		},
 
-		// Reset data
+		// 重置
 		reset() {
 			this.resetFields()
 			this.$emit("reset");
 		},
 
-		// Clear data
+		// 清空
 		clear() {
 			for (let i in this.form) {
 				this.form[i] = undefined
@@ -122,11 +129,11 @@ export default {
 			this.$emit("clear");
 		},
 
-		// Search data
+		// 搜索
 		search() {
 			const params = cloneDeep(this.form);
 
-			// Search event
+			// 搜索事件
 			const next = (params) => {
 				this.crud.refresh({
 					...params,
@@ -136,14 +143,16 @@ export default {
 				this.close();
 			};
 
-			if (this.onSearch) {
-				this.onSearch(params, { next, close: this.close });
+			const hook = this.beforeSearch || this.onSearch
+
+			if (hook) {
+				hook(params, { next, close: this.close });
 			} else {
 				next(params);
 			}
 		},
 
-		// Render form
+		// 渲染表单
 		renderForm() {
 			return (
 				<el-form

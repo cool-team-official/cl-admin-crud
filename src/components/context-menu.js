@@ -113,8 +113,8 @@ export default {
 	},
 
 	render() {
-		const { left, top } = this.style;
 		const { default: slot } = this.$scopedSlots;
+		const { left, top } = this.style;
 
 		const deep = (list, pIndex, level) => {
 			return (
@@ -131,10 +131,10 @@ export default {
 										"is-ellipsis": e.ellipsis,
 										"is-disabled": e.disabled
 									}}>
-									{/* Prefix icon */}
+									{/* 前缀图标 */}
 									{e["prefix-icon"] && <i class={e["prefix-icon"]}></i>}
 
-									{/* Label */}
+									{/* 标题 */}
 									<span
 										on-click={() => {
 											this.clickRow(e);
@@ -142,10 +142,10 @@ export default {
 										{e.label}
 									</span>
 
-									{/* Suffix icon */}
+									{/* 后缀图标 */}
 									{e["suffix-icon"] && <i class={e["suffix-icon"]}></i>}
 
-									{/* Children list */}
+									{/* 子集 */}
 									{e.children &&
 										e.showChildren &&
 										deep(e.children, e._index, level + 1)}

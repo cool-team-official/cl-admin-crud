@@ -1,7 +1,7 @@
 import { renderNode } from "@/utils/vnode";
 import { isNull, isArray, isEmpty } from "@/utils";
 import { Emitter, Screen } from "@/mixins";
-import { isFunction } from "../utils";
+import { deepMerge, isFunction } from "../utils";
 
 export default {
 	name: "cl-table",
@@ -26,12 +26,12 @@ export default {
 				return {};
 			}
 		},
-		// Auto calc max height
+		// 是否自动计算表格高度
 		autoHeight: {
 			type: Boolean,
 			default: true
 		},
-		// Enable context-menu
+		// 开启右键菜单
 		contextMenu: [Boolean, Array]
 	},
 	data() {
@@ -42,7 +42,7 @@ export default {
 		};
 	},
 	created() {
-		// Get default sort
+		// 获取默认排序
 		const { order, prop } = this.props["default-sort"] || {};
 
 		if (order && prop) {
@@ -50,12 +50,12 @@ export default {
 			this.crud.params.prop = prop;
 		}
 
-		// Crud event
+		// 事件监听
+
 		this.$on("resize", () => {
 			this.calcMaxHeight();
 		});
 
-		// Crud refresh
 		this.$on("crud.refresh", ({ list }) => {
 			this.data = list;
 		});
@@ -67,6 +67,7 @@ export default {
 		this.bindMethods();
 	},
 	methods: {
+		// 渲染列
 		renderColumn() {
 			return this.columns
 				.filter((e) => !e.hidden)
@@ -182,6 +183,7 @@ export default {
 				});
 		},
 
+		// 渲染操作列
 		renderOp(item) {
 			const { rowEdit, rowDelete, getPermission, dict } = this.crud;
 
@@ -275,6 +277,7 @@ export default {
 			);
 		},
 
+		// 渲染空数据
 		renderEmpty() {
 			const empty = this.$scopedSlots["table-empty"];
 			const scope = {
@@ -289,10 +292,45 @@ export default {
 			}
 		},
 
+		// 渲染追加数据
 		renderAppend() {
 			return this.$slots["append"];
 		},
 
+		// 设置列
+		setColumn(prop, data) {
+			this.columns.forEach(e => {
+				if (e.prop === prop) {
+					for (let i in data) {
+						this.$set(e, i, data[i])
+					}
+				}
+			})
+		},
+
+		// 显示列
+		showColumn(prop) {
+			const props = isArray(prop) ? prop : [prop]
+
+			this.columns
+				.filter(e => props.includes(e.prop))
+				.forEach(e => {
+					this.$set(e, 'hidden', false)
+				})
+		},
+
+		// 隐藏列
+		hiddenColumn(prop) {
+			const props = isArray(prop) ? prop : [prop]
+
+			this.columns
+				.filter(e => props.includes(e.prop))
+				.forEach(e => {
+					this.$set(e, 'hidden', true)
+				})
+		},
+
+		// 改变排序方式
 		changeSort(prop, order) {
 			if (order === "desc") {
 				order = "descending";
@@ -305,6 +343,7 @@ export default {
 			this.$refs["table"].sort(prop, order);
 		},
 
+		// 监听排序
 		onSortChange({ prop, order }) {
 			if (order === "descending") {
 				order = "desc";
@@ -327,11 +366,13 @@ export default {
 			}
 		},
 
+		// 监听表格选择
 		onSelectionChange(selection) {
 			this.dispatch("cl-crud", "table.selection-change", { selection });
 			this.$emit("selection-change", selection);
 		},
 
+		// 右键菜单
 		onRowContextMenu(row, column, event) {
 			const { refresh, rowEdit, rowDelete, getPermission, selection, table = {} } = this.crud;
 
@@ -437,6 +478,7 @@ export default {
 			}
 		},
 
+		// 绑定 el-table 回调
 		bindEmit() {
 			const funcs = [
 				"select",
@@ -458,11 +500,12 @@ export default {
 
 			funcs.forEach((name) => {
 				this.emit[name] = (...args) => {
-					this.$emit.apply(this, [name, ...args]);
+					this.$emit(name, ...args);
 				};
 			});
 		},
 
+		// 绑定 el-table 事件
 		bindMethods() {
 			const list = [
 				"clearSelection",
@@ -481,6 +524,7 @@ export default {
 			});
 		},
 
+		// 计算表格最大高度
 		calcMaxHeight() {
 			if (!this.autoHeight) {
 				return false;
@@ -519,7 +563,7 @@ export default {
 					this.maxHeight = h1 > h2 ? h1 : h2;
 				}
 			});
-		}
+		},
 	},
 
 	render() {

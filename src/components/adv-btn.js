@@ -3,7 +3,6 @@ export default {
 	componentName: "ClAdvBtn",
 	inject: ["crud"],
 	props: {
-		// el-button props
 		props: Object
 	},
 	render() {

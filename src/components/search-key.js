@@ -25,8 +25,9 @@ export default {
 			type: String,
 			default: '250px'
 		},
-		// 搜索时的钩子
+		// 搜索时钩子
 		onSearch: Function,
+		beforeSearch: Function
 	},
 	data() {
 		return {
@@ -70,6 +71,7 @@ export default {
 				params[e.value] = null;
 			});
 
+			// 搜索事件
 			const next = (params2) => {
 				this.crud.refresh({
 					page: 1,
@@ -79,8 +81,11 @@ export default {
 				});
 			};
 
-			if (this.onSearch) {
-				this.onSearch(params, { next });
+			// 钩子处理
+			const hook = this.beforeSearch || this.onSearch
+
+			if (hook) {
+				hook(params, { next });
 			} else {
 				next();
 			}

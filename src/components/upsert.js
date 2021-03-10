@@ -7,36 +7,40 @@ export default {
 	mixins: [Emitter],
 	inject: ["crud"],
 	props: {
-		// Bind value
+		// 表单值
 		value: {
 			type: Object,
 			default: () => {
 				return {};
 			}
 		},
-		// Form items
+		// 表单项
 		items: Array,
-		// el-dialog attributes
+		// el-dialog 参数
 		props: {
 			type: Object,
 			default: () => {
 				return {};
 			}
 		},
-		// Edit sync
+		// 编辑下是否同步打开
 		sync: Boolean,
-		// Op buttons
+		// 操作按钮
 		op: Object,
-		// Dialog header object
+		// 对话框参数
 		dialog: Object,
-		// Hook by open { isEdit, data, { submit, done, close } }
+		// 打开前钩子 { isEdit, data, { submit, done, close } }
 		onOpen: Function,
-		// Hook by close { action, done }
+		beforeOpen: Function,
+		// 关闭前钩子 { action, done }
 		onClose: Function,
-		// Hook by info { data, { next, done, close } }
+		beforeClose: Function,
+		// 获取详情前钩子 { data, { next, done, close } }
 		onInfo: Function,
-		// Hook by submit { isEdit, data, { next, done, close } }
-		onSubmit: Function
+		beforeInfo: Function,
+		// 提交前钩子 { isEdit, data, { next, done, close } }
+		onSubmit: Function,
+		beforeSubmit: Function,
 	},
 	data() {
 		return {
@@ -63,7 +67,7 @@ export default {
 		this.extendApi();
 	},
 	methods: {
-		// Add
+		// 新增
 		async add() {
 			this.isEdit = false;
 			this.form = {};
@@ -71,11 +75,10 @@ export default {
 			this.$emit("open", false, {});
 		},
 
-		// Append data
+		// 追加
 		async append(data) {
 			this.isEdit = false;
 
-			// Assign data
 			if (data) {
 				for (let i in data) {
 					this.$set(this.form, i, data[i]);
@@ -86,63 +89,62 @@ export default {
 			this.$emit("open", false, this.form);
 		},
 
-		// Edit
+		// 编辑
 		edit(data) {
 			const { showLoading, hiddenLoading } = this.$refs["form"];
 
-			// Is edit
+			// 是否编辑模式
 			this.isEdit = true;
-			// Start loading
+
+			// 加载进度
 			showLoading();
 
-			// Async open form
+			// 是否同步打开
 			if (!this.sync) {
 				this.open();
 			}
 
-			// Finish
+			// 完成
 			const done = (data) => {
-				// Assign data
 				Object.assign(this.form, data);
 				hiddenLoading();
 			};
 
-			// Close
+			// 关闭
 			const close = () => {
 				hiddenLoading();
 				this.close();
 			};
 
-			// Submit
+			// 获取详情事件
 			const next = (data) => {
-				// Get Service and Dict
 				const { dict, service } = this.crud;
-				// Get api.info
+
+				// 获取请求方法
 				const reqName = dict.api.info;
 
 				return new Promise((resolve, reject) => {
-					// Validate
+					// 验证方法
 					if (!service[reqName]) {
 						reject(`Request function '${reqName}' is not fount!`);
 						hiddenLoading();
 						return null;
 					}
 
-					// Send request
+					// 发送请求
 					service[reqName]({
 						id: data.id
 					})
 						.then((res) => {
-							// Finish
 							done(res);
 							resolve(res);
 
-							// Sync open form
+							// 同步打开
 							if (this.sync) {
 								this.open();
 							}
 
-							// Callback
+							// 回调
 							this.$emit("open", this.isEdit, this.form);
 						})
 						.catch((err) => {
@@ -155,9 +157,11 @@ export default {
 				});
 			};
 
-			// Hook by onInfo
-			if (this.onInfo) {
-				this.onInfo(data, {
+			// 钩子处理
+			const hook = this.beforeInfo || this.onInfo;
+
+			if (hook) {
+				hook(data, {
 					next,
 					done: (data) => {
 						done(data);
@@ -170,7 +174,7 @@ export default {
 			}
 		},
 
-		// Open
+		// 打开
 		open() {
 			const { saveButtonText, closeButtonText } = this.crud.dict.label;
 
@@ -181,9 +185,11 @@ export default {
 						...this.props
 					},
 					on: {
-						open: (data, { done, close }) => {
-							if (this.onOpen) {
-								this.onOpen(this.isEdit, this.form, {
+						open: (_, { done, close }) => {
+							const hook = this.beforeOpen || this.onOpen
+
+							if (hook) {
+								hook(this.isEdit, this.form, {
 									submit: () => {
 										this.submit(this.form);
 									},
@@ -194,8 +200,16 @@ export default {
 
 							resolve();
 						},
+						close: () => {
+							const hook = this.beforeClose || this.onClose;
+
+							if (hook) {
+								hook(this.close);
+							} else {
+								this.close();
+							}
+						},
 						submit: this.submit,
-						close: this.beforeClose
 					},
 					op: {
 						saveButtonText,
@@ -211,52 +225,40 @@ export default {
 			});
 		},
 
-		// Close
+		// 关闭
 		close() {
 			this.$refs["form"].close();
 			this.$emit("close");
 		},
 
-		// Before close
-		beforeClose() {
-			if (this.onClose) {
-				this.onClose(this.close);
-			} else {
-				this.close();
-			}
-		},
-
 		/**
-		 * Submit form
+		 * 表单提交
 		 * @param {object} data
 		 */
 		submit(data, { done }) {
-			// Get Service and Dict
 			const { dict, service } = this.crud;
 
-			// Submit
+			// 提交事件
 			const next = (data) => {
 				return new Promise((resolve, reject) => {
-					// Judge update or add
-					const func = this.isEdit ? "update" : "add";
-					// Get request function
-					const reqName = dict.api[func];
+					// 获取请求方法
+					const reqName = dict.api[this.isEdit ? "update" : "add"];
 
-					// Validate
+					// 验证请求方法
 					if (!service[reqName]) {
 						done();
 						return reject(`Request function '${reqName}' is not fount!`);
 					}
 
-					// Send request
+					// 发送请求
 					service[reqName](data)
 						.then((res) => {
 							this.$message.success("保存成功");
-							// Close
-							this.close("submit");
-							// Refresh
+							// 关闭弹窗
+							this.close();
+							// 刷新列表
 							this.crud.refresh();
-							// Callback
+							// 回调
 							resolve(res);
 						})
 						.catch((err) => {
@@ -267,25 +269,24 @@ export default {
 				});
 			};
 
-			// Hook by onSubmit
-			if (this.onSubmit) {
-				// Get mount variable
-				const { $refs } = __inst;
+			// 钩子处理
+			const hook = this.beforeSubmit || this.onSubmit
 
-				this.onSubmit(this.isEdit, data, {
-					$refs,
+			if (hook) {
+				hook(this.isEdit, data, {
 					done,
 					next,
 					close: () => {
 						this.close("submit");
-					}
+					},
+					$refs: __inst.$refs,
 				});
 			} else {
 				next(data);
 			}
 		},
 
-		// Extends form api
+		// 扩展方法
 		extendApi() {
 			const list = [
 				"getForm",

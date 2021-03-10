@@ -3,7 +3,6 @@ export default {
 	componentName: "ClRefreshBtn",
 	inject: ["crud"],
 	props: {
-		// el-button props
 		props: Object
 	},
 	render() {

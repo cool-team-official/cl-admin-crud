@@ -66,9 +66,10 @@
 						</el-select>
 					</cl-filter>
 					<el-button size="mini" @click="openForm">自定义测试表单</el-button>
-					<p style="margin-left: 10px" v-contextmenu="contextMenu">
+					<p style="margin: 0 10px" v-contextmenu="contextMenu">
 						<el-button size="mini">测试右键菜单</el-button>
 					</p>
+					<el-button size="mini" @click="hiddenColumn">隐藏列</el-button>
 					<cl-flex1></cl-flex1>
 					<cl-search-key></cl-search-key>
 					<cl-adv-btn></cl-adv-btn>
@@ -1011,6 +1012,10 @@
 						list.push({
 							val: ""
 						});
+					},
+
+					hiddenColumn() {
+						this.$refs["table"].hiddenColumn(["name", "price"]);
 					}
 				}
 			});

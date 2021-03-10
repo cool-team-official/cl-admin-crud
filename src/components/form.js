@@ -10,7 +10,7 @@ export default {
 	componentName: "ClForm",
 	mixins: [Emitter, Screen, Form],
 	props: {
-		// Bind value
+		// 表单值
 		value: {
 			type: Object,
 			default: () => {
@@ -79,7 +79,7 @@ export default {
 	},
 	methods: {
 		open(options = {}) {
-			// Merge conf
+			// 合并配置
 			for (let i in this.conf) {
 				switch (i) {
 					case "items":
@@ -95,17 +95,17 @@ export default {
 				}
 			}
 
-			// Show dialog
+			// 显示对话框
 			this.visible = true;
 
-			// Preset form
+			// 预设表单值
 			if (options.form) {
 				for (let i in options.form) {
 					this.$set(this.form, i, options.form[i]);
 				}
 			}
 
-			// Set form data by items
+			// 设置表单默认值
 			this.conf.items.map((e) => {
 				if (e.prop) {
 					// Priority use form data
@@ -117,7 +117,7 @@ export default {
 				}
 			});
 
-			// Open callback
+			// 打开回调
 			const { open } = this.conf.on;
 
 			if (open) {
@@ -164,22 +164,19 @@ export default {
 		},
 
 		submit() {
-			// Validate form
+			// 验证表单
 			this.$refs["form"].validate(async (valid) => {
 				if (valid) {
 					this.saving = true;
 
-					// Hooks event
+					// 提交钩子
 					const { submit } = this.conf.on;
 
-					// Get mount variable
-					const { $refs } = __inst;
-
-					// Hooks by onSubmit
+					// 提交事件
 					if (isFunction(submit)) {
 						let d = cloneDeep(this.form);
 
-						// Filter hidden data
+						// 过滤被隐藏的数据
 						this.conf.items.forEach((e) => {
 							if (e._hidden) {
 								delete d[e.prop];
@@ -190,12 +187,10 @@ export default {
 							}
 						});
 
-						console.log(d);
-
 						submit(d, {
 							done: this.done,
 							close: this.close,
-							$refs
+							$refs: __inst.$refs
 						});
 					} else {
 						console.error("Submit is not found");
@@ -213,10 +208,9 @@ export default {
 		},
 
 		collapseItem(item) {
-			// Clear item validate
+			// 清空表单验证
 			this.clearValidate(item.prop);
 
-			// Toggle
 			if (item.collapse !== undefined) {
 				item.collapse = !item.collapse;
 			}
@@ -237,7 +231,7 @@ export default {
 							...props
 						}
 					}}>
-					{/* el-form-item list */}
+					{/* 表单项列表 */}
 					<el-row gutter={10} v-loading={this.loading}>
 						{items.map((e, i) => {
 							if (e.type == "tabs") {
@@ -248,20 +242,20 @@ export default {
 								);
 							}
 
-							// Is hidden
+							// 是否隐藏
 							e._hidden = Parse("hidden", {
 								value: e.hidden,
 								scope: this.form,
 								data: this.conf._data
 							});
 
-							// Is group
+							// 是否分组显示
 							e._group =
 								isEmpty(this.tabActive) || isEmpty(e.group)
 									? true
 									: e.group === this.tabActive;
 
-							// Parse label
+							// 解析标题
 							if (isString(e.label)) {
 								e._label = {
 									text: e.label
@@ -383,48 +377,48 @@ export default {
 			return hidden
 				? null
 				: buttons.map((vnode) => {
-						if (vnode == "save") {
-							return (
-								<el-button
-									{...{
-										props: {
-											size,
-											type: "success",
-											disabled: this.loading,
-											loading: this.saving
-										},
-										on: {
-											click: () => {
-												this.submit();
-											}
+					if (vnode == "save") {
+						return (
+							<el-button
+								{...{
+									props: {
+										size,
+										type: "success",
+										disabled: this.loading,
+										loading: this.saving
+									},
+									on: {
+										click: () => {
+											this.submit();
 										}
-									}}>
-									{saveButtonText}
-								</el-button>
-							);
-						} else if (vnode == "close") {
-							return (
-								<el-button
-									{...{
-										props: {
-											size
-										},
-										on: {
-											click: () => {
-												this.beforeClose();
-											}
+									}
+								}}>
+								{saveButtonText}
+							</el-button>
+						);
+					} else if (vnode == "close") {
+						return (
+							<el-button
+								{...{
+									props: {
+										size
+									},
+									on: {
+										click: () => {
+											this.beforeClose();
 										}
-									}}>
-									{closeButtonText}
-								</el-button>
-							);
-						} else {
-							return renderNode(vnode, {
-								scope: this.form,
-								$scopedSlots: this.$scopedSlots
-							});
-						}
-				  });
+									}
+								}}>
+								{closeButtonText}
+							</el-button>
+						);
+					} else {
+						return renderNode(vnode, {
+							scope: this.form,
+							$scopedSlots: this.$scopedSlots
+						});
+					}
+				});
 		}
 	},
 

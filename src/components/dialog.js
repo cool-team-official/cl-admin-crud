@@ -67,13 +67,11 @@ export default {
 						el.style.marginBottom = "50px";
 					}
 
-					// Set header cursor state
 					el.querySelector(".el-dialog__header").style.cursor = f ? "text" : "move";
 				}
 			}
 
 			if (this.crud) {
-				// Fullscreen change event
 				this.crud.$emit("fullscreen-change");
 			}
 		},
@@ -122,13 +120,13 @@ export default {
 			this.$emit("closed");
 		},
 
-		// Change dialog fullscreen status
+		// 改变全屏状态
 		changeFullscreen(f) {
 			this.$set(this.props, "fullscreen", isBoolean(f) ? f : !this.props.fullscreen);
 			this.$emit("update:props:fullscreen", this.props.fullscreen);
 		},
 
-		// Drag event
+		// 拖动事件
 		dragEvent() {
 			this.$nextTick(() => {
 				const dlg = this.$el.querySelector(".el-dialog");
@@ -251,7 +249,7 @@ export default {
 			});
 		},
 
-		// Header
+		// 渲染对话框头部
 		renderHeader() {
 			return this.hiddenHeader ? null : (
 				<div
@@ -270,56 +268,56 @@ export default {
 						{this.hiddenControls
 							? null
 							: this.controls.map((vnode) => {
-									// Fullscreen
-									if (vnode === "fullscreen") {
-										// Hidden fullscreen btn
-										if (this.screen === "xs") {
-											return null;
-										}
-
-										// Show diff icon
-										if (this.props.fullscreen) {
-											return (
-												<button
-													type="button"
-													class="minimize"
-													on-click={() => {
-														this.changeFullscreen(false);
-													}}>
-													<i class="el-icon-minus" />
-												</button>
-											);
-										} else {
-											return (
-												<button
-													type="button"
-													class="maximize"
-													on-click={() => {
-														this.changeFullscreen(true);
-													}}>
-													<i class="el-icon-full-screen" />
-												</button>
-											);
-										}
+								// Fullscreen
+								if (vnode === "fullscreen") {
+									// Hidden fullscreen btn
+									if (this.screen === "xs") {
+										return null;
 									}
-									// Close
-									else if (vnode === "close") {
+
+									// Show diff icon
+									if (this.props.fullscreen) {
 										return (
 											<button
 												type="button"
-												class="close"
-												on-click={this.beforeClose}>
-												<i class="el-icon-close" />
+												class="minimize"
+												on-click={() => {
+													this.changeFullscreen(false);
+												}}>
+												<i class="el-icon-minus" />
+											</button>
+										);
+									} else {
+										return (
+											<button
+												type="button"
+												class="maximize"
+												on-click={() => {
+													this.changeFullscreen(true);
+												}}>
+												<i class="el-icon-full-screen" />
 											</button>
 										);
 									}
-									// Custom node render
-									else {
-										return renderNode(vnode, {
-											$scopedSlots: this.$scopedSlots
-										});
-									}
-							  })}
+								}
+								// Close
+								else if (vnode === "close") {
+									return (
+										<button
+											type="button"
+											class="close"
+											on-click={this.beforeClose}>
+											<i class="el-icon-close" />
+										</button>
+									);
+								}
+								// Custom node render
+								else {
+									return renderNode(vnode, {
+										$scopedSlots: this.$scopedSlots
+									});
+								}
+							})}
 					</div>
 				</div>
 			);
