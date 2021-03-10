@@ -15,13 +15,18 @@ export default {
 			type: Array,
 			default: () => []
 		},
-		// 搜索时的钩子
-		onSearch: Function,
 		// 输入框占位内容
 		placeholder: {
 			type: String,
 			default: "请输入关键字"
-		}
+		},
+		// 输入框宽度
+		width: {
+			type: String,
+			default: '250px'
+		},
+		// 搜索时的钩子
+		onSearch: Function,
 	},
 	data() {
 		return {
@@ -99,6 +104,7 @@ export default {
 					class="cl-search-key__select"
 					filterable
 					size="mini"
+					style="width: 150px"
 					v-model={this.field2}
 					v-show={this.selectList.length > 0}
 					on-change={this.onNameChange}>
@@ -113,6 +119,7 @@ export default {
 					on-input={this.onInput}
 					clearable
 					size="mini"
+					style={{ width: this.width }}
 				/>
 
 				<el-button

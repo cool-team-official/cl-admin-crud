@@ -46,7 +46,7 @@ function parse(method, { value, pipe, form }) {
 	} else if (isFunction(pipe)) {
 		pipes = [pipe];
 	} else {
-		console.error(`Pipe data error!`);
+		console.error(`Hook data error!`);
 		return value;
 	}
 
