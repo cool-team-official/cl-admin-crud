@@ -1,7 +1,7 @@
 import { renderNode } from "@/utils/vnode";
 import { isNull, isArray, isEmpty } from "@/utils";
 import { Emitter, Screen } from "@/mixins";
-import { deepMerge, isFunction } from "../utils";
+import { isFunction } from "../utils";
 
 export default {
 	name: "cl-table",
@@ -63,7 +63,7 @@ export default {
 	mounted() {
 		this.renderEmpty();
 		this.calcMaxHeight();
-		this.bindEmit();
+		this.bindEmits();
 		this.bindMethods();
 	},
 	methods: {
@@ -185,38 +185,54 @@ export default {
 
 		// 渲染操作列
 		renderOp(item) {
-			const { rowEdit, rowDelete, getPermission, dict } = this.crud;
+			const { rowEdit, rowDelete, permission, dict, style } = this.crud;
 
 			if (!item) {
 				return null;
 			}
 
+			// 渲染编辑、删除、自定义按钮
 			const render = (scope) => {
-				// Use op button list
-				return (item.buttons || ["update", "delete"]).map((vnode) => {
+				return (item.buttons || ["edit", "delete"]).map((vnode) => {
 					if (vnode === "update" || vnode === "edit") {
 						return (
-							<el-button
-								size="mini"
-								type="text"
-								v-show={getPermission("update")}
-								on-click={() => {
-									rowEdit(scope.row);
-								}}>
-								{dict.label.update}
-							</el-button>
+							permission.update && (
+								<el-button
+									{...{
+										props: {
+											size: "mini",
+											type: "text",
+											...style.editBtn
+										},
+										on: {
+											click: () => {
+												rowEdit(scope.row);
+											}
+										}
+									}}>
+									{dict.label.update}
+								</el-button>
+							)
 						);
 					} else if (vnode === "delete") {
 						return (
-							<el-button
-								size="mini"
-								type="text"
-								v-show={getPermission("delete")}
-								on-click={() => {
-									rowDelete(scope.row);
-								}}>
-								{dict.label.delete}
-							</el-button>
+							permission.delete && (
+								<el-button
+									{...{
+										props: {
+											size: "mini",
+											type: "text",
+											...style.deleteBtn
+										},
+										on: {
+											click: () => {
+												rowDelete(scope.row);
+											}
+										}
+									}}>
+									{dict.label.delete}
+								</el-button>
+							)
 						);
 					} else {
 						return renderNode(vnode, { scope, $scopedSlots: this.$scopedSlots });
@@ -232,7 +248,8 @@ export default {
 							width: "160px",
 							align: "center",
 							fixed: this.isMobile ? null : "right",
-							...item
+							...item,
+							...style.tableOp
 						},
 						scopedSlots: {
 							default: (scope) => {
@@ -299,35 +316,35 @@ export default {
 
 		// 设置列
 		setColumn(prop, data) {
-			this.columns.forEach(e => {
+			this.columns.forEach((e) => {
 				if (e.prop === prop) {
 					for (let i in data) {
-						this.$set(e, i, data[i])
+						this.$set(e, i, data[i]);
 					}
 				}
-			})
+			});
 		},
 
 		// 显示列
 		showColumn(prop) {
-			const props = isArray(prop) ? prop : [prop]
+			const props = isArray(prop) ? prop : [prop];
 
 			this.columns
-				.filter(e => props.includes(e.prop))
-				.forEach(e => {
-					this.$set(e, 'hidden', false)
-				})
+				.filter((e) => props.includes(e.prop))
+				.forEach((e) => {
+					this.$set(e, "hidden", false);
+				});
 		},
 
 		// 隐藏列
 		hiddenColumn(prop) {
-			const props = isArray(prop) ? prop : [prop]
+			const props = isArray(prop) ? prop : [prop];
 
 			this.columns
-				.filter(e => props.includes(e.prop))
-				.forEach(e => {
-					this.$set(e, 'hidden', true)
-				})
+				.filter((e) => props.includes(e.prop))
+				.forEach((e) => {
+					this.$set(e, "hidden", true);
+				});
 		},
 
 		// 改变排序方式
@@ -376,7 +393,7 @@ export default {
 		onRowContextMenu(row, column, event) {
 			const { refresh, rowEdit, rowDelete, getPermission, selection, table = {} } = this.crud;
 
-			// context-menu conf
+			// 配置
 			let cm =
 				this.contextMenu || (isEmpty(this.contextMenu) ? false : table["context-menu"]);
 
@@ -393,7 +410,7 @@ export default {
 			}
 
 			if (enable) {
-				// Parse buttons
+				// 解析按钮
 				let list = buttons
 					.map((e) => {
 						switch (e) {
@@ -465,8 +482,8 @@ export default {
 					})
 					.filter((e) => Boolean(e) && !e.hidden);
 
-				// Open context menu
-				if (list.length > 0) {
+				// 打开右键菜单
+				if (!isEmpty(list)) {
 					this.$crud.openContextMenu(event, {
 						list
 					});
@@ -479,8 +496,8 @@ export default {
 		},
 
 		// 绑定 el-table 回调
-		bindEmit() {
-			const funcs = [
+		bindEmits() {
+			const emits = [
 				"select",
 				"select-all",
 				"cell-mouse-enter",
@@ -498,7 +515,7 @@ export default {
 				"expand-change"
 			];
 
-			funcs.forEach((name) => {
+			emits.forEach((name) => {
 				this.emit[name] = (...args) => {
 					this.$emit(name, ...args);
 				};
@@ -507,7 +524,7 @@ export default {
 
 		// 绑定 el-table 事件
 		bindMethods() {
-			const list = [
+			const methods = [
 				"clearSelection",
 				"toggleRowSelection",
 				"toggleAllSelection",
@@ -519,7 +536,7 @@ export default {
 				"sort"
 			];
 
-			list.forEach((n) => {
+			methods.forEach((n) => {
 				this[n] = this.$refs["table"][n];
 			});
 		},
@@ -563,7 +580,7 @@ export default {
 					this.maxHeight = h1 > h2 ? h1 : h2;
 				}
 			});
-		},
+		}
 	},
 
 	render() {
@@ -585,7 +602,8 @@ export default {
 							"max-height": this.maxHeight + "px",
 							border: true,
 							size: "mini",
-							...this.props
+							...this.props,
+							...this.crud.style.table
 						},
 						scopedSlots: {
 							...this.$scopedSlots

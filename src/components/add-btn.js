@@ -6,20 +6,25 @@ export default {
 		props: Object
 	},
 	render() {
+		const { getPermission, dict, style, rowAdd } = this.crud;
+
 		return (
-			this.crud.getPermission("add") && (
+			getPermission("add") && (
 				<el-button
 					{...{
 						props: {
 							size: "mini",
 							type: "primary",
-							...this.props
+							...this.props,
+							...style.addBtn
 						},
 						on: {
-							click: this.crud.rowAdd
+							click: () => {
+								rowAdd();
+							}
 						}
 					}}>
-					{this.$slots.default || this.crud.dict.label.add}
+					{this.$slots.default || dict.label.add}
 				</el-button>
 			)
 		);

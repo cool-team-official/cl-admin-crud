@@ -88,7 +88,8 @@
 				</cl-adv-search>
 
 				<!-- 编辑、新增 -->
-				<cl-upsert ref="upsert" v-bind="upsert.props" v-on="upsert.on"> </cl-upsert>
+				<cl-upsert ref="upsert" v-model="form" v-bind="upsert.props" v-on="upsert.on">
+				</cl-upsert>
 
 				<!-- 自定义表单 -->
 				<cl-form ref="form">
@@ -217,7 +218,11 @@
 				info: (d) => {
 					console.log("GET[info]", d);
 					return new Promise((resolve) => {
-						resolve(UserList.find(e.id == d.id));
+						setTimeout(() => {
+							let item = UserList.find((e) => e.id == d.id);
+							item.hook = "1,2,3";
+							resolve(item);
+						}, 1000);
 					});
 				},
 				add: (d) => {
@@ -245,7 +250,32 @@
 				}
 			};
 
-			Vue.use(CRUD);
+			Vue.use(CRUD, {
+				crud: {
+					style: {
+						refreshBtn: {},
+						addBtn: {},
+						multiDeleteBtn: {},
+						advBtn: {},
+						editBtn: {
+							// type: "success"
+						},
+						deleteBtn: {
+							// type: "danger"
+						},
+						saveBtn: {
+							// type: "primary"
+						},
+						closeBtn: {},
+						table: {
+							// size: "mini"
+						},
+						tableOp: {
+							// width: "200px"
+						}
+					}
+				}
+			});
 
 			Vue.component("cl-test", {
 				data() {
@@ -281,6 +311,7 @@
 						selects: {
 							status: ""
 						},
+						form: {},
 						table: {
 							on: {
 								"row-click": (row) => {
@@ -412,7 +443,7 @@
 
 								onInfo(data, { next, done, close }) {
 									console.log("cl-upsert 详情钩子", data);
-									done(data);
+									next(data);
 								},
 
 								onSubmit(isEdit, data, { next, close, done }) {
@@ -432,6 +463,33 @@
 								},
 
 								items: [
+									{
+										label: "hook",
+										prop: "hook",
+										hook: {
+											bind: ["split", "number"]
+										},
+										component: {
+											name: "el-select",
+											options: [
+												{
+													label: "李逍遥",
+													value: 1
+												},
+												{
+													label: "景天",
+													value: 2
+												},
+												{
+													label: "梅长苏",
+													value: 3
+												}
+											],
+											props: {
+												multiple: true
+											}
+										}
+									},
 									{
 										type: "tabs",
 										props: {
@@ -639,7 +697,6 @@
 						]
 					};
 				},
-				mounted() {},
 				methods: {
 					openForm() {
 						this.$refs["form"].open({

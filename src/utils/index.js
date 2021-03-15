@@ -132,10 +132,10 @@ export function contains(parent, node) {
 }
 
 export function getInstance(component) {
-	const ComponentConstructor = __vue.extend(component)
+	const ComponentConstructor = __vue.extend(component);
 	return new ComponentConstructor({
-		el: document.createElement('div')
-	})
+		el: document.createElement("div")
+	});
 }
 
 export { cloneDeep, flat };

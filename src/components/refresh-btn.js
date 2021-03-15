@@ -6,18 +6,23 @@ export default {
 		props: Object
 	},
 	render() {
+		const { refresh, dict, style } = this.crud;
+
 		return (
 			<el-button
 				{...{
 					props: {
 						size: "mini",
-						...this.props
+						...this.props,
+						...style.refreshBtn
 					},
 					on: {
-						click: this.crud.refresh
+						click: () => {
+							refresh();
+						}
 					}
 				}}>
-				{this.$slots.default || "刷新"}
+				{this.$slots.default || dict.label.refresh}
 			</el-button>
 		);
 	}

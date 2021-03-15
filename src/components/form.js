@@ -3,7 +3,7 @@ import { renderNode } from "@/utils/vnode";
 import Parse from "@/utils/parse";
 import valueHook from "@/hook/value";
 import { Form, Emitter, Screen } from "@/mixins";
-import { __inst } from "@/store";
+import { __inst, __crud } from "@/store";
 
 export default {
 	name: "cl-form",
@@ -199,14 +199,17 @@ export default {
 			});
 		},
 
+		// 显示加载中
 		showLoading() {
 			this.loading = true;
 		},
 
+		// 隐藏加载中
 		hiddenLoading() {
 			this.loading = false;
 		},
 
+		// 展开、收起
 		collapseItem(item) {
 			// 清空表单验证
 			this.clearValidate(item.prop);
@@ -216,6 +219,15 @@ export default {
 			}
 		},
 
+		// 重新绑定表单数据
+		reBindForm(data) {
+			for (let i in data) {
+				let d = this.conf.items.find((e) => e.prop === i);
+				this.form[i] = d ? valueHook.bind(data[i], d.hook, this.form) : data[i];
+			}
+		},
+
+		// 渲染表单
 		renderForm() {
 			const { props, items } = this.conf;
 
@@ -370,55 +382,59 @@ export default {
 			);
 		},
 
+		// 渲染底部元素
 		renderFooter() {
+			const { style } = __crud;
 			const { hidden, buttons, saveButtonText, closeButtonText } = this.conf.op;
 			const { size = "small" } = this.conf.props;
 
 			return hidden
 				? null
 				: buttons.map((vnode) => {
-					if (vnode == "save") {
-						return (
-							<el-button
-								{...{
-									props: {
-										size,
-										type: "success",
-										disabled: this.loading,
-										loading: this.saving
-									},
-									on: {
-										click: () => {
-											this.submit();
+						if (vnode == "save") {
+							return (
+								<el-button
+									{...{
+										props: {
+											size,
+											type: "success",
+											disabled: this.loading,
+											loading: this.saving,
+											...style.saveBtn
+										},
+										on: {
+											click: () => {
+												this.submit();
+											}
 										}
-									}
-								}}>
-								{saveButtonText}
-							</el-button>
-						);
-					} else if (vnode == "close") {
-						return (
-							<el-button
-								{...{
-									props: {
-										size
-									},
-									on: {
-										click: () => {
-											this.beforeClose();
+									}}>
+									{saveButtonText}
+								</el-button>
+							);
+						} else if (vnode == "close") {
+							return (
+								<el-button
+									{...{
+										props: {
+											size,
+											...style.closeBtn
+										},
+										on: {
+											click: () => {
+												this.beforeClose();
+											}
 										}
-									}
-								}}>
-								{closeButtonText}
-							</el-button>
-						);
-					} else {
-						return renderNode(vnode, {
-							scope: this.form,
-							$scopedSlots: this.$scopedSlots
-						});
-					}
-				});
+									}}>
+									{closeButtonText}
+								</el-button>
+							);
+						} else {
+							return renderNode(vnode, {
+								scope: this.form,
+								$scopedSlots: this.$scopedSlots
+							});
+						}
+				  });
 		}
 	},
 

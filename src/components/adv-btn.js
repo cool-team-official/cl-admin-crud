@@ -12,7 +12,7 @@ export default {
 					{...{
 						props: {
 							size: "mini",
-							...this.props
+							...this.crud.style.advBtn
 						},
 						on: {
 							click: this.crud.openAdvSearch

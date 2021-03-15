@@ -499,14 +499,14 @@
 .el-table {
 	&__header {
 		th {
-			padding: 0 !important;
-			background-color: #ebeef5 !important;
-			height: 36px;
-			line-height: 36px;
+			background-color: #ebeef5;
+			padding: 3px 0;
 		}
 
 		.cell {
-			font-weight: normal;
+			color: rgba(0, 0, 0, 0.85);
+			font-weight: 500;
+			font-size: 14px;
 		}
 	}
 
@@ -518,7 +518,7 @@
 
 	&-column--selection {
 		.cell {
-			padding: 0 14px !important;
+			padding: 0 14px;
 		}
 	}
 }

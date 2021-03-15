@@ -1,5 +1,6 @@
 import { Emitter } from "@/mixins";
 import { __inst } from "@/store";
+import valueHook from "@/hook/value";
 
 export default {
 	name: "cl-upsert",
@@ -102,7 +103,7 @@ export default {
 
 			// 完成
 			const done = (data) => {
-				Object.assign(this.form, data);
+				this.$refs["form"].reBindForm(data);
 				hiddenLoading();
 			};
 
@@ -198,7 +199,7 @@ export default {
 								this.close();
 							}
 						},
-						submit: this.submit,
+						submit: this.submit
 					},
 					op: {
 						saveButtonText,
@@ -209,7 +210,7 @@ export default {
 					items: this.items,
 					_data: {
 						isEdit: this.isEdit
-					},
+					}
 				});
 			});
 		},
@@ -266,7 +267,7 @@ export default {
 					close: () => {
 						this.close("submit");
 					},
-					$refs: __inst.$refs,
+					$refs: __inst.$refs
 				});
 			} else {
 				next(data);
@@ -288,7 +289,7 @@ export default {
 				"resetFields",
 				"clearValidate",
 				"validateField",
-				"validate",
+				"validate"
 			];
 
 			list.forEach((n) => {

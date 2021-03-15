@@ -6,21 +6,24 @@ export default {
 		props: Object
 	},
 	render() {
+		const { getPermission, dict, style, selection, deleteMulti } = this.crud;
+
 		return (
-			this.crud.getPermission("delete") && (
+			getPermission("delete") && (
 				<el-button
 					{...{
 						props: {
 							size: "mini",
 							type: "danger",
-							disabled: this.crud.selection.length == 0,
-							...this.props
+							disabled: selection.length == 0,
+							...this.props,
+							...style.multiDeleteBtn
 						},
 						on: {
-							click: this.crud.deleteMulti
+							click: deleteMulti
 						}
 					}}>
-					{this.$slots.default || this.crud.dict.label.multiDelete || this.crud.dict.label.delete}
+					{this.$slots.default || dict.label.multiDelete || dict.label.delete}
 				</el-button>
 			)
 		);

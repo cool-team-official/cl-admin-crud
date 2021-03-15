@@ -17,7 +17,7 @@ export default {
 		// 删除钩子 { selection, { next } }
 		onDelete: Function,
 		// 刷新钩子 { params, { next, done, render } }
-		onRefresh: Function,
+		onRefresh: Function
 	},
 
 	mixins: [Emitter],
@@ -73,6 +73,7 @@ export default {
 					prop: "prop"
 				},
 				label: {
+					refresh: "刷新",
 					add: "新增",
 					delete: "删除",
 					multiDelete: "删除",
@@ -84,32 +85,44 @@ export default {
 				}
 			},
 			table: {
-				'context-menu': true
+				"context-menu": true
 			},
 			fn: {
 				permission: null
+			},
+			style: {
+				refreshBtn: {},
+				addBtn: {},
+				multiDeleteBtn: {},
+				advBtn: {},
+				editBtn: {},
+				deleteBtn: {},
+				saveBtn: {},
+				closeBtn: {}
 			}
 		};
 	},
 
 	created() {
+		// 合并全局配置
+		deepMerge(this, __crud);
+
 		this.$on("table.selection-change", ({ selection }) => {
 			this.selection = selection;
 		});
 	},
 
 	mounted() {
-		// 合并全局配置
-		const res = bootstrap(deepMerge(this, __crud));
+		const res = bootstrap(this);
 
 		// Loaded
 		this.$emit("load", res);
 
 		// 绑定自定义事件
-		this.bindEvent(res)
+		this.bindEvent(res);
 
 		// 窗口事件
-		window.removeEventListener("resize", function () { });
+		window.removeEventListener("resize", function () {});
 		window.addEventListener("resize", () => {
 			this.doLayout();
 		});
@@ -118,6 +131,10 @@ export default {
 	methods: {
 		// 获取权限
 		getPermission(key) {
+			if (!key) {
+				return this.permission;
+			}
+
 			switch (key) {
 				case "edit":
 				case "update":
@@ -129,7 +146,7 @@ export default {
 
 		// 获取参数
 		getParams() {
-			return this.params
+			return this.params;
 		},
 
 		// 绑定自定义事件
@@ -148,11 +165,11 @@ export default {
 				}
 
 				if (!["on", "once"].includes(mode)) {
-					return console.error(i, 'mode must be (on / once)');
+					return console.error(i, "mode must be (on / once)");
 				}
 
 				if (!isFunction(callback)) {
-					return console.error(i, 'callback is not a function');
+					return console.error(i, "callback is not a function");
 				}
 
 				__inst[`$${mode}`](i, (data) => {
@@ -350,6 +367,6 @@ export default {
 	},
 
 	render() {
-		return <div class={['cl-crud', { 'is-border': this.border }]}>{this.$slots.default}</div>;
+		return <div class={["cl-crud", { "is-border": this.border }]}>{this.$slots.default}</div>;
 	}
 };

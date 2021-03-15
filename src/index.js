@@ -10,21 +10,21 @@ let ContextMenu = null;
 const install = function (Vue, options = {}) {
 	const { crud = {} } = options;
 
-	// Set options store
+	// 缓存配置
 	store.__crud = crud;
 	store.__vue = Vue;
 	store.__inst = new Vue();
 
-	// Register components
+	// 注册组件
 	for (let i in components) {
 		Vue.component(components[i].name, components[i]);
 	}
 
-	// Get instance
+	// 获取组件实例
 	Form = getInstance(components.Form);
 	ContextMenu = getInstance(components.ContextMenu);
 
-	// Register directive: contextmenu
+	// 注册右键菜单指令
 	(function () {
 		function fn(el, binding) {
 			el.oncontextmenu = function (e) {
@@ -40,7 +40,7 @@ const install = function (Vue, options = {}) {
 		});
 	})();
 
-	// Mount $crud
+	// 挂载 $crud
 	Vue.prototype.$crud = {
 		emit: store.__inst.$emit,
 		openForm: Form.open,
@@ -59,6 +59,6 @@ export const CRUD = {
 export { Form, ContextMenu };
 
 export default {
-	version: "1.4.4",
+	version: "1.5.0",
 	install
 };

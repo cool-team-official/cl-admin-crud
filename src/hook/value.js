@@ -36,7 +36,7 @@ function parse(method, { value, pipe, form }) {
 		if (format[pipe]) {
 			pipes = [pipe];
 		} else {
-			console.error(`${piep} is not found.`);
+			console.error(`${pipe} is not found.`);
 			return value;
 		}
 	} else if (isArray(pipe)) {

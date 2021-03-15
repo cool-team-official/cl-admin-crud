@@ -44,6 +44,7 @@ export default {
 				this.currentPage = res.currentPage || res.page || 1;
 				this.pageSize = res.pageSize || res.size || 20;
 				this.total = res.total | 0;
+				this.crud.params.size = this.pageSize;
 			}
 		}
 	},
