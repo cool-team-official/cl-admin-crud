@@ -558,7 +558,7 @@ export default {
 						return false;
 					}
 
-					let h = 20;
+					let h = 25;
 
 					for (let i = 0; i < rows.length; i++) {
 						let f = true;

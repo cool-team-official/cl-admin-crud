@@ -497,16 +497,16 @@
 }
 
 .el-table {
-	&__header {
+	table {
 		th {
 			background-color: #ebeef5;
 			padding: 3px 0;
+			font-size: 14px;
 		}
 
 		.cell {
 			color: rgba(0, 0, 0, 0.85);
 			font-weight: 500;
-			font-size: 14px;
 		}
 	}
 
