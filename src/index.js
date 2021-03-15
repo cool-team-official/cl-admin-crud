@@ -10,6 +10,9 @@ let ContextMenu = null;
 const install = function (Vue, options = {}) {
 	const { crud = {} } = options;
 
+	// 样式
+	if (!crud.style) crud.style = {};
+
 	// 缓存配置
 	store.__crud = crud;
 	store.__vue = Vue;
@@ -59,6 +62,6 @@ export const CRUD = {
 export { Form, ContextMenu };
 
 export default {
-	version: "1.5.1",
+	version: "1.5.2",
 	install
 };
