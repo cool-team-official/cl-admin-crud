@@ -15,6 +15,7 @@ import Table from "./table";
 import Upsert from "./upsert";
 import Dialog from "./dialog";
 import Filter from "./filter";
+import FilterGroup from "./filter-group";
 import ErrorMessage from "./error-message";
 
 export {
@@ -35,5 +36,6 @@ export {
 	Upsert,
 	Dialog,
 	Filter,
+	FilterGroup,
 	ErrorMessage
 };

@@ -168,11 +168,43 @@
 	}
 }
 
+.cl-filter-group {
+	display: inline-flex;
+	white-space: nowrap;
+	margin: 0 10px;
+
+	&__items {
+		display: inline-flex;
+	}
+}
+
 .cl-adv-search {
+	.el-drawer {
+		&__header {
+			margin-bottom: 20px;
+		}
+
+		&__body {
+			height: calc(100% - 63px);
+			padding: 0 5px;
+		}
+	}
+
 	&__container {
-		height: calc(100% - 50px);
+		height: calc(100% - 55px);
 		overflow-y: auto;
 		padding: 10px 20px;
+		margin-bottom: 5px;
+		box-sizing: border-box;
+
+		&::-webkit-scrollbar {
+			width: 6px;
+		}
+
+		&::-webkit-scrollbar-thumb {
+			border-radius: 6px;
+			background-color: rgba(144, 147, 153, 0.3);
+		}
 
 		.el-form-item__content {
 			& > div {
@@ -185,8 +217,8 @@
 		display: flex;
 		align-items: center;
 		justify-content: flex-end;
-		height: 40px;
-		margin: 0 10px;
+		height: 50px;
+		border-top: 1px solid #ebeef5;
 	}
 
 	.el-drawer {
@@ -206,6 +238,8 @@
 }
 
 .cl-form {
+	padding: 5px;
+
 	.el-form-item {
 		.el-input-number {
 			&__decrease,

@@ -7,8 +7,11 @@ import { __inst, __crud } from "@/store";
 
 export default {
 	name: "cl-form",
+
 	componentName: "ClForm",
+
 	mixins: [Emitter, Screen, Form],
+
 	props: {
 		// 表单值
 		value: {
@@ -16,13 +19,21 @@ export default {
 			default: () => {
 				return {};
 			}
-		}
+		},
+
+		// 是否只显示表单
+		inner: Boolean,
+
+		// 绑定组件名，设置方法
+		bindComponentName: String
 	},
+
 	provide() {
 		return {
 			form: this.form
 		};
 	},
+
 	data() {
 		return {
 			visible: false,
@@ -62,6 +73,7 @@ export default {
 			tabActive: null
 		};
 	},
+
 	watch: {
 		value: {
 			immediate: true,
@@ -69,16 +81,11 @@ export default {
 			handler(val) {
 				this.form = val;
 			}
-		},
-		form: {
-			immediate: true,
-			handler(val) {
-				this.$emit("input", val);
-			}
 		}
 	},
+
 	methods: {
-		open(options = {}) {
+		create(options = {}) {
 			// 合并配置
 			for (let i in this.conf) {
 				switch (i) {
@@ -95,9 +102,6 @@ export default {
 				}
 			}
 
-			// 显示对话框
-			this.visible = true;
-
 			// 预设表单值
 			if (options.form) {
 				for (let i in options.form) {
@@ -108,11 +112,10 @@ export default {
 			// 设置表单默认值
 			this.conf.items.map((e) => {
 				if (e.prop) {
-					// Priority use form data
 					this.$set(
 						this.form,
 						e.prop,
-						valueHook.bind(this.form[e.prop] || cloneDeep(e.value), e.hook, this.form)
+						valueHook.bind(isEmpty(this.form[e.prop]) ? cloneDeep(e.value) : this.form[e.prop], e.hook, this.form)
 					);
 				}
 			});
@@ -130,7 +133,12 @@ export default {
 				});
 			}
 
-			return this;
+			return this
+		},
+
+		open(options) {
+			this.visible = true;
+			return this.create(options)
 		},
 
 		beforeClose() {
@@ -199,30 +207,10 @@ export default {
 			});
 		},
 
-		// 显示加载中
-		showLoading() {
-			this.loading = true;
-		},
-
-		// 隐藏加载中
-		hiddenLoading() {
-			this.loading = false;
-		},
-
-		// 展开、收起
-		collapseItem(item) {
-			// 清空表单验证
-			this.clearValidate(item.prop);
-
-			if (item.collapse !== undefined) {
-				item.collapse = !item.collapse;
-			}
-		},
-
 		// 重新绑定表单数据
 		reBindForm(data) {
-			for (let i in data) {
-				let d = this.conf.items.find((e) => e.prop === i);
+			for (const i in data) {
+				const d = this.conf.items.find((e) => e.prop === i);
 				this.form[i] = d ? valueHook.bind(data[i], d.hook, this.form) : data[i];
 			}
 		},
@@ -234,7 +222,6 @@ export default {
 			return (
 				<el-form
 					ref="form"
-					class="cl-form"
 					{...{
 						props: {
 							"label-position": this.isMobile ? "top" : "",
@@ -382,8 +369,8 @@ export default {
 			);
 		},
 
-		// 渲染底部元素
-		renderFooter() {
+		// 渲染操作按钮
+		renderOp() {
 			const { style } = __crud;
 			const { hidden, buttons, saveButtonText, closeButtonText } = this.conf.op;
 			const { size = "small" } = this.conf.props;
@@ -391,58 +378,67 @@ export default {
 			return hidden
 				? null
 				: buttons.map((vnode) => {
-						if (vnode == "save") {
-							return (
-								<el-button
-									{...{
-										props: {
-											size,
-											type: "success",
-											disabled: this.loading,
-											loading: this.saving,
-											...style.saveBtn
-										},
-										on: {
-											click: () => {
-												this.submit();
-											}
+					if (vnode == "save") {
+						return (
+							<el-button
+								{...{
+									props: {
+										size,
+										type: "success",
+										disabled: this.loading,
+										loading: this.saving,
+										...style.saveBtn
+									},
+									on: {
+										click: () => {
+											this.submit();
 										}
-									}}>
-									{saveButtonText}
-								</el-button>
-							);
-						} else if (vnode == "close") {
-							return (
-								<el-button
-									{...{
-										props: {
-											size,
-											...style.closeBtn
-										},
-										on: {
-											click: () => {
-												this.beforeClose();
-											}
+									}
+								}}>
+								{saveButtonText}
+							</el-button>
+						);
+					} else if (vnode == "close") {
+						return (
+							<el-button
+								{...{
+									props: {
+										size,
+										...style.closeBtn
+									},
+									on: {
+										click: () => {
+											this.beforeClose();
 										}
-									}}>
-									{closeButtonText}
-								</el-button>
-							);
-						} else {
-							return renderNode(vnode, {
-								scope: this.form,
-								$scopedSlots: this.$scopedSlots
-							});
-						}
-				  });
+									}
+								}}>
+								{closeButtonText}
+							</el-button>
+						);
+					} else {
+						return renderNode(vnode, {
+							scope: this.form,
+							$scopedSlots: this.$scopedSlots
+						});
+					}
+				});
 		}
 	},
 
 	render() {
-		const { title, width, dialog } = this.conf;
+		const Form = <div class="cl-form">
+			<div class="cl-form__container">{this.renderForm()}</div>
+			<div class="cl-form__footer" >
+				{this.renderOp()}
+			</div>
+		</div>
 
-		return (
-			<div class="cl-form">
+		if (this.inner) {
+			return Form
+		} else {
+			const { title, width, dialog } = this.conf;
+
+			return (
 				<cl-dialog
 					title={title}
 					width={width}
@@ -461,12 +457,9 @@ export default {
 							closed: this.onClosed
 						}
 					}}>
-					<div class="cl-form__container">{this.renderForm()}</div>
-					<div class="cl-form__footer" slot="footer">
-						{this.renderFooter()}
-					</div>
+					{Form}
 				</cl-dialog>
-			</div>
-		);
+			)
+		}
 	}
 };

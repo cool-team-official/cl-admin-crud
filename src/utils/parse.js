@@ -1,7 +1,7 @@
-import { isString, isBoolean, isFunction, isArray } from "./index";
+import { isString, isBoolean, isFunction } from "./index";
 
 /**
- * parse hidden
+ * 解析 hidden 参数的几个场景
  * 1 Boolean
  * 2 Function({ scope })
  * 3 :[prop] is bind form[prop] value

@@ -32,8 +32,11 @@
 			<cl-crud ref="crud" @load="onLoad">
 				<el-row type="flex" align="middle">
 					<cl-refresh-btn></cl-refresh-btn>
+
 					<cl-add-btn></cl-add-btn>
+
 					<cl-multi-delete-btn></cl-multi-delete-btn>
+
 					<cl-query
 						field="status"
 						:list="[
@@ -47,31 +50,38 @@
 							}
 						]"
 					></cl-query>
-					<cl-filter label="状态">
-						<el-select
-							size="mini"
-							v-model="selects.status"
-							@change="
-								(val) => {
-									refresh({
-										status: val,
-										page: 1
-									});
-								}
-							"
-						>
-							<el-option value="" label="全部"></el-option>
-							<el-option :value="0" label="禁用"></el-option>
-							<el-option :value="1" label="启用"></el-option>
-						</el-select>
-					</cl-filter>
+
+					<cl-filter-group v-model="form">
+						<cl-filter label="状态">
+							<el-select size="mini" v-model="form.status">
+								<el-option value="" label="全部"></el-option>
+								<el-option :value="0" label="禁用"></el-option>
+								<el-option :value="1" label="启用"></el-option>
+							</el-select>
+						</cl-filter>
+
+						<cl-filter label="姓名">
+							<el-input
+								placeholder="请输入姓名"
+								clearable
+								v-model="form.name"
+								size="mini"
+							></el-input>
+						</cl-filter>
+					</cl-filter-group>
+
 					<el-button size="mini" @click="openForm">自定义测试表单</el-button>
+
 					<p style="margin: 0 10px" v-contextmenu="contextMenu">
 						<el-button size="mini">测试右键菜单</el-button>
 					</p>
+
 					<el-button size="mini" @click="hiddenColumn">隐藏列</el-button>
+
 					<cl-flex1></cl-flex1>
-					<cl-search-key></cl-search-key>
+
+					<cl-search-key field="name"></cl-search-key>
+
 					<cl-adv-btn></cl-adv-btn>
 				</el-row>
 
@@ -81,6 +91,11 @@
 
 				<el-row>
 					<cl-pagination></cl-pagination>
+				</el-row>
+
+				<el-row>
+					<p>Form-inner</p>
+					<cl-form ref="form-inner" inner></cl-form>
 				</el-row>
 
 				<!-- 高级搜索 -->
@@ -306,12 +321,15 @@
 
 			new Vue({
 				el: "#app",
+
 				data() {
 					return {
 						selects: {
 							status: ""
 						},
-						form: {},
+						form: {
+							status: ""
+						},
 						table: {
 							on: {
 								"row-click": (row) => {
@@ -591,6 +609,7 @@
 							props: {
 								onOpen(data, { next }) {
 									console.log("adv-search 打开钩子", data);
+
 									next();
 								},
 								onClose(done) {
@@ -697,6 +716,31 @@
 						]
 					};
 				},
+
+				mounted() {
+					this.$refs["form-inner"].create({
+						items: [
+							{
+								label: "姓名",
+								prop: "name",
+								component: {
+									name: "el-input"
+								},
+								rules: {
+									required: true,
+									message: "姓名不能为空"
+								}
+							}
+						],
+						on: {
+							submit: (data, { done }) => {
+								console.log(data);
+								done();
+							}
+						}
+					});
+				},
+
 				methods: {
 					openForm() {
 						this.$refs["form"].open({

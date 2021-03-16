@@ -1,12 +1,15 @@
 import { Emitter } from "@/mixins";
 import { __inst } from "@/store";
-import valueHook from "@/hook/value";
 
 export default {
 	name: "cl-upsert",
+
 	componentName: "ClUpsert",
+
 	mixins: [Emitter],
+
 	inject: ["crud"],
+
 	props: {
 		// 表单值
 		value: {
@@ -39,12 +42,14 @@ export default {
 		// 提交前钩子 { isEdit, data, { next, done, close } }
 		onSubmit: Function
 	},
+
 	data() {
 		return {
 			isEdit: false,
 			form: {}
 		};
 	},
+
 	watch: {
 		value: {
 			immediate: true,
@@ -54,15 +59,14 @@ export default {
 			}
 		}
 	},
+
 	created() {
 		this.$on("crud.add", this.add);
 		this.$on("crud.append", this.append);
 		this.$on("crud.edit", this.edit);
 		this.$on("crud.close", this.close);
 	},
-	mounted() {
-		this.extendApi();
-	},
+
 	methods: {
 		// 新增
 		async add() {
@@ -272,29 +276,6 @@ export default {
 			} else {
 				next(data);
 			}
-		},
-
-		// 扩展方法
-		extendApi() {
-			const list = [
-				"getForm",
-				"setForm",
-				"setData",
-				"setOptions",
-				"toggleItem",
-				"hiddenItem",
-				"showItem",
-				"showLoading",
-				"hiddenLoading",
-				"resetFields",
-				"clearValidate",
-				"validateField",
-				"validate"
-			];
-
-			list.forEach((n) => {
-				this[n] = this.$refs["form"][n];
-			});
 		}
 	},
 
@@ -304,6 +285,7 @@ export default {
 				<cl-form
 					ref="form"
 					v-model={this.form}
+					bind-component-name="ClUpsert"
 					{...{
 						scopedSlots: {
 							...this.$scopedSlots

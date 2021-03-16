@@ -1,21 +1,17 @@
 import { cloneDeep } from "@/utils";
 import { renderNode } from "@/utils/vnode";
-import Parse from "@/utils/parse";
-import { Form, Emitter, Screen } from "@/mixins";
+import { Emitter, Screen } from "@/mixins";
 
 export default {
 	name: "cl-adv-search",
+
 	componentName: "ClAdvSearch",
+
 	inject: ["crud"],
-	mixins: [Emitter, Screen, Form],
+
+	mixins: [Emitter, Screen],
+
 	props: {
-		// 表单值
-		value: {
-			type: Object,
-			default: () => {
-				return {};
-			}
-		},
 		// 表单项
 		items: {
 			type: Array,
@@ -40,46 +36,38 @@ export default {
 		// 搜索时钩子 { data, { next, close } }
 		onSearch: Function
 	},
+
 	data() {
 		return {
+			visible: false,
 			form: {},
-			visible: false
 		};
 	},
-	provide() {
-		return {
-			form: this.form
-		}
-	},
-	watch: {
-		value: {
-			immediate: true,
-			deep: true,
-			handler(val) {
-				this.form = val;
-			}
-		}
-	},
+
 	created() {
 		this.$on("crud.open", this.open);
 		this.$on("crud.close", this.close);
 	},
+
 	methods: {
 		// 打开
 		open() {
-			this.items.map((e) => {
-				if (this.form[e.prop] === undefined) {
-					this.$set(this.form, e.prop, e.value);
-				}
-			});
-
 			// 打开事件
 			const next = (data) => {
 				this.visible = true;
 
 				if (data) {
-					Object.assign(this.form, data);
+					Object.assign(this.form, data)
 				}
+
+				this.$nextTick(() => {
+					this.$refs['form'].create({
+						items: this.items,
+						op: {
+							hidden: true
+						}
+					})
+				})
 
 				this.$emit("open", this.form);
 			};
@@ -108,7 +96,7 @@ export default {
 
 		// 重置
 		reset() {
-			this.resetFields()
+			this.$refs['form'].resetFields()
 			this.$emit("reset");
 		},
 
@@ -117,7 +105,6 @@ export default {
 			for (let i in this.form) {
 				this.form[i] = undefined
 			}
-			this.clearValidate()
 			this.$emit("clear");
 		},
 
@@ -140,64 +127,6 @@ export default {
 			} else {
 				next(params);
 			}
-		},
-
-		// 渲染表单
-		renderForm() {
-			return (
-				<el-form
-					ref="form"
-					class="cl-form"
-					{...{
-						props: {
-							size: "small",
-							"label-width": "100px",
-							'label-position': this.isMobile ? 'top' : '',
-							disabled: this.saving,
-							model: this.form,
-							...this.props
-						}
-					}}>
-					<el-row
-						v-loading={this.loading}
-						{...{
-							attrs: {
-								...this["v-loading"]
-							}
-						}}>
-						{this.items.map((e, i) => {
-							return (
-								!Parse("hidden", {
-									value: e.hidden,
-									scope: this.form
-								}) && (
-									<el-col
-										{...{
-											props: {
-												key: i,
-												span: 24,
-												...e
-											}
-										}}>
-										<el-form-item
-											{...{
-												props: {
-													...e
-												}
-											}}>
-											{renderNode(e.component, {
-												prop: e.prop,
-												scope: this.form,
-												$scopedSlots: this.$scopedSlots
-											})}
-										</el-form-item>
-									</el-col>
-								)
-							);
-						})}
-					</el-row>
-				</el-form>
-			);
 		}
 	},
 
@@ -227,7 +156,9 @@ export default {
 							...this.on
 						}
 					}}>
-					<div class="cl-adv-search__container">{this.renderForm()}</div>
+					<div class="cl-adv-search__container">
+						<cl-form v-model={this.form} ref="form" inner bind-component-name="ClAdvSearch"></cl-form>
+					</div>
 
 					<div class="cl-adv-search__footer">
 						{this.opList.map((e) => {

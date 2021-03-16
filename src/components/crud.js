@@ -98,7 +98,8 @@ export default {
 				editBtn: {},
 				deleteBtn: {},
 				saveBtn: {},
-				closeBtn: {}
+				closeBtn: {},
+				filterSearchBtn: {}
 			}
 		};
 	},
@@ -122,7 +123,7 @@ export default {
 		this.bindEvent(res);
 
 		// 窗口事件
-		window.removeEventListener("resize", function () {});
+		window.removeEventListener("resize", function () { });
 		window.addEventListener("resize", () => {
 			this.doLayout();
 		});

@@ -1,7 +1,35 @@
-import { dataset } from "@/utils";
+import { dataset, getParent } from "@/utils";
 
 export default {
+	mounted() {
+		// 回调父组件方法
+		if (this.bindComponentName) {
+			const apis = [
+				"getForm",
+				"setForm",
+				"setData",
+				"setOptions",
+				"toggleItem",
+				"hiddenItem",
+				"showItem",
+				"showLoading",
+				"hiddenLoading",
+				"resetFields",
+				"clearValidate",
+				"validateField",
+				"validate"
+			]
+
+			const parent = getParent.call(this, this.bindComponentName)
+
+			apis.forEach((n) => {
+				parent[n] = this[n];
+			});
+		}
+	},
+
 	methods: {
+		// 设置值
 		_set({ prop, options, hidden, path }, data) {
 			let conf = null
 
@@ -31,28 +59,28 @@ export default {
 			return dataset(conf, p, data);
 		},
 
-		// Get form
+		// 获取表单值
 		getForm(prop) {
 			return prop ? this.form[prop] : this.form;
 		},
 
-		// Set form
+		// 设置表单值
 		setForm(prop, value) {
 			// Add watch
 			this.$set(this.form, prop, value);
 		},
 
-		// Set [props, on]
+		// 设置表单项数据
 		setData(path, value) {
 			this._set({ path }, value);
 		},
 
-		// Set item component options
+		// 设置组件选项
 		setOptions(prop, value) {
 			this._set({ options: true, prop }, value);
 		},
 
-		// Toggle item is hide or show
+		// 切换表单项的隐藏、显示
 		toggleItem(prop, value) {
 			if (value === undefined) {
 				value = this._set({ prop, hidden: true });
@@ -61,42 +89,62 @@ export default {
 			this._set({ hidden: true, prop }, !value);
 		},
 
-		// Hidden item
+		// 隐藏表单项
 		hiddenItem(...props) {
 			props.forEach((prop) => {
 				this._set({ hidden: true, prop }, true);
 			});
 		},
 
-		// Show item
+		// 显示表单项
 		showItem(...props) {
 			props.forEach((prop) => {
 				this._set({ hidden: true, prop }, false);
 			});
 		},
 
-		// Reset form data
+		// 显示加载中
+		showLoading() {
+			this.loading = true;
+		},
+
+		// 隐藏加载中
+		hiddenLoading() {
+			this.loading = false;
+		},
+
+		// 展开、收起
+		collapseItem(item) {
+			// 清空表单验证
+			this.clearValidate(item.prop);
+
+			if (item.collapse !== undefined) {
+				item.collapse = !item.collapse;
+			}
+		},
+
+		// 重置表单
 		resetFields() {
 			if (this.$refs['form']) {
 				this.$refs['form'].resetFields()
 			}
 		},
 
-		// Clear form validate
+		// 清除表单验证
 		clearValidate(props) {
 			if (this.$refs['form']) {
 				return this.$refs['form'].clearValidate(props)
 			}
 		},
 
-		// Validate form-item field
+		// 验证表单字段
 		validateField(props, callback) {
 			if (this.$refs['form']) {
 				this.$refs['form'].validateField(props, callback)
 			}
 		},
 
-		// Validate form 
+		// 验证表单 
 		validate(callback) {
 			if (this.$refs['form']) {
 				this.$refs['form'].validate(callback)
