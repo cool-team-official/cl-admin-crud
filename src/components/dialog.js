@@ -11,6 +11,9 @@ export default {
 			type: String,
 			default: "对话框"
 		},
+		// 高度
+		height: String,
+		// 宽度
 		width: {
 			type: String,
 			default: "50%"
@@ -334,7 +337,7 @@ export default {
 						fullscreen: this.isMobile ? true : this.props.fullscreen,
 						visible: this.visible,
 						"show-close": false,
-						"custom-class": `cl-dialog ${this.props.customClass || ""}`
+						customClass: `cl-dialog ${this.props.customClass || ""}`
 					},
 					on: {
 						open: this.open,
@@ -346,7 +349,7 @@ export default {
 				{/* Header */}
 				<template slot="title">{this.renderHeader()}</template>
 				{/* Container */}
-				<div class="cl-dialog__container" key={this.cacheKey}>
+				<div class="cl-dialog__container" key={this.cacheKey} style={{ height: this.height }}>
 					{this.$slots.default}
 				</div>
 				{/* Footer */}
