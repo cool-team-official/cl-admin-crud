@@ -2,6 +2,7 @@ import { isArray, isEmpty } from "@/utils";
 
 export default {
 	name: "cl-form-tabs",
+
 	props: {
 		value: [String, Number],
 		labels: {
@@ -17,6 +18,7 @@ export default {
 			default: '#409EFF'
 		}
 	},
+
 	data() {
 		return {
 			active: null,
@@ -27,12 +29,14 @@ export default {
 			}
 		};
 	},
+
 	mounted() {
 		if (isArray(this.labels) && this.labels.length > 0) {
 			this.list = this.labels;
 			this.update(isEmpty(this.value) ? this.list[0].value : this.value);
 		}
 	},
+
 	methods: {
 		update(val,) {
 			this.$nextTick(() => {
@@ -63,6 +67,7 @@ export default {
 			this.$emit("change", val);
 		}
 	},
+	
 	render() {
 		return (
 			<div class="cl-form-tabs">

@@ -1,10 +1,14 @@
 export default {
 	name: "cl-adv-btn",
+
 	componentName: "ClAdvBtn",
+
 	inject: ["crud"],
+
 	props: {
 		props: Object
 	},
+
 	render() {
 		return (
 			<div class="cl-adv-btn">

@@ -78,6 +78,8 @@
 
 					<el-button size="mini" @click="hiddenColumn">隐藏列</el-button>
 
+					<el-button size="mini" @click="openDialog">打开对话框</el-button>
+
 					<cl-flex1></cl-flex1>
 
 					<cl-search-key field="name"></cl-search-key>
@@ -149,8 +151,19 @@
 				</cl-form>
 
 				<!-- 自定义对话框 -->
-				<cl-dialog title="自定义对话框" :visible.sync="dialog.visible">
-					自定义对话框
+				<cl-dialog
+					title="自定义对话框"
+					:visible.sync="dialog.visible"
+					:controls="['slot-btn', 'cl-flex1', 'fullscreen', 'close']"
+					:props="dialog.props"
+				>
+					自定义对话框 - {{ dialog.props }}
+
+					<template #slot-btn>
+						<button>
+							<i class="el-icon-document-copy"></i>
+						</button>
+					</template>
 				</cl-dialog>
 			</cl-crud>
 		</div>
@@ -485,7 +498,8 @@
 										label: "hook",
 										prop: "hook",
 										hook: {
-											bind: ["split", "number"]
+											bind: ["split", "number"],
+											submit: "join"
 										},
 										component: {
 											name: "el-select",
@@ -653,7 +667,11 @@
 							}
 						},
 						dialog: {
-							visible: true
+							visible: false,
+							props: {
+								model: false,
+								fullscreen: false
+							}
 						},
 						contextMenu: [
 							{
@@ -1117,6 +1135,10 @@
 
 					hiddenColumn() {
 						this.$refs["table"].hiddenColumn(["name", "price"]);
+					},
+
+					openDialog() {
+						this.dialog.visible = true;
 					}
 				}
 			});

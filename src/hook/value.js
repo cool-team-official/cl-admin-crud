@@ -55,7 +55,7 @@ function parse(method, { value, pipe, form }) {
 	pipes.forEach((e) => {
 		if (isString(e)) {
 			d = format[e](d);
-		} else {
+		} else if (isFunction(e)) {
 			d = e(d, form);
 		}
 	});

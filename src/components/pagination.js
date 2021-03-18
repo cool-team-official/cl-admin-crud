@@ -1,7 +1,10 @@
 export default {
 	name: "cl-pagination",
+
 	componentName: "ClPagination",
+
 	inject: ["crud"],
+
 	props: {
 		props: {
 			type: Object,
@@ -11,6 +14,7 @@ export default {
 		},
 		on: Object
 	},
+
 	data() {
 		return {
 			total: 0,
@@ -18,15 +22,18 @@ export default {
 			pageSize: 20
 		};
 	},
+
 	watch: {
 		props: {
 			immediate: true,
 			handler: "setPagination"
 		}
 	},
+
 	created() {
 		this.$on("crud.refresh", this.setPagination);
 	},
+
 	methods: {
 		currentChange(index) {
 			this.crud.refresh({
@@ -48,6 +55,7 @@ export default {
 			}
 		}
 	},
+
 	render() {
 		return (
 			<el-pagination

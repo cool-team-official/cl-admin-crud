@@ -7,6 +7,7 @@ require("@/static/index.scss");
 
 export default {
 	name: "cl-crud",
+
 	componentName: "ClCrud",
 
 	props: {

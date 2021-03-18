@@ -1,10 +1,14 @@
 export default {
 	name: "cl-add-btn",
+
 	componentName: "ClAddBtn",
+
 	inject: ["crud"],
+
 	props: {
 		props: Object
 	},
+
 	render() {
 		const { getPermission, dict, style, rowAdd } = this.crud;
 

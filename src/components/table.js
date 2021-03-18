@@ -5,9 +5,13 @@ import { isFunction } from "../utils";
 
 export default {
 	name: "cl-table",
+
 	componentName: "ClTable",
+
 	inject: ["crud"],
+
 	mixins: [Emitter, Screen],
+
 	props: {
 		columns: {
 			type: Array,
@@ -34,6 +38,7 @@ export default {
 		// 开启右键菜单
 		contextMenu: [Boolean, Array]
 	},
+
 	data() {
 		return {
 			maxHeight: null,
@@ -41,6 +46,7 @@ export default {
 			emit: {}
 		};
 	},
+
 	created() {
 		// 获取默认排序
 		const { order, prop } = this.props["default-sort"] || {};
@@ -60,12 +66,14 @@ export default {
 			this.data = list;
 		});
 	},
+
 	mounted() {
 		this.renderEmpty();
 		this.calcMaxHeight();
 		this.bindEmits();
 		this.bindMethods();
 	},
+
 	methods: {
 		// 渲染列
 		renderColumn() {

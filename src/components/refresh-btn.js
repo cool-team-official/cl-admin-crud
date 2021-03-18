@@ -1,10 +1,14 @@
 export default {
 	name: "cl-refresh-btn",
+
 	componentName: "ClRefreshBtn",
+
 	inject: ["crud"],
+
 	props: {
 		props: Object
 	},
+
 	render() {
 		const { refresh, dict, style } = this.crud;
 

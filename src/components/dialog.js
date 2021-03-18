@@ -4,7 +4,9 @@ import { Screen } from "@/mixins";
 
 export default {
 	name: "cl-dialog",
+
 	componentName: "ClDialog",
+
 	props: {
 		visible: Boolean,
 		title: {
@@ -49,19 +51,27 @@ export default {
 			default: false
 		}
 	},
+
 	mixins: [Screen],
+
 	data() {
 		return {
-			cacheKey: 0
+			cacheKey: 0,
+			fullscreen: this.props.fullscreen
 		};
 	},
+
 	watch: {
-		"props.fullscreen"(f) {
+		"props.fullscreen"(v) {
+			this.fullscreen = v
+		},
+
+		isFullscreen(v) {
 			if (this.$el && this.$el.querySelector) {
 				const el = this.$el.querySelector(".el-dialog");
 
 				if (el) {
-					if (f) {
+					if (v) {
 						el.style = {
 							top: 0,
 							left: 0
@@ -70,7 +80,7 @@ export default {
 						el.style.marginBottom = "50px";
 					}
 
-					el.querySelector(".el-dialog__header").style.cursor = f ? "text" : "move";
+					el.querySelector(".el-dialog__header").style.cursor = v ? "text" : "move";
 				}
 			}
 
@@ -78,10 +88,11 @@ export default {
 				this.crud.$emit("fullscreen-change");
 			}
 		},
+
 		visible: {
 			immediate: true,
-			handler(f) {
-				if (f) {
+			handler(v) {
+				if (v) {
 					this.dragEvent();
 				} else {
 					setTimeout(() => {
@@ -89,8 +100,19 @@ export default {
 					}, 300);
 				}
 			}
+		},
+	},
+
+	computed: {
+		isFullscreen() {
+			return this.isMobile ? true : this.fullscreen
+		},
+
+		_height() {
+			return this.height ? (this.isFullscreen ? `calc(100vh - 46px)` : this.height) : null
 		}
 	},
+
 	methods: {
 		open() {
 			this.cacheKey++;
@@ -124,9 +146,8 @@ export default {
 		},
 
 		// 改变全屏状态
-		changeFullscreen(f) {
-			this.$set(this.props, "fullscreen", isBoolean(f) ? f : !this.props.fullscreen);
-			this.$emit("update:props:fullscreen", this.props.fullscreen);
+		changeFullscreen(v) {
+			this.props.fullscreen = (this.fullscreen = isBoolean(v) ? v : !this.fullscreen)
 		},
 
 		// 拖动事件
@@ -141,14 +162,14 @@ export default {
 
 				hdr.onmousedown = (e) => {
 					// Props
-					const { fullscreen, top = "15vh" } = this.props;
+					const { top = "15vh" } = this.props;
 
 					// Body size
 					const { clientWidth, clientHeight } = document.body;
 
 					// Try drag
 					const isDrag = (() => {
-						if (fullscreen) {
+						if (this.fullscreen) {
 							return false;
 						}
 
@@ -252,7 +273,7 @@ export default {
 			});
 		},
 
-		// 渲染对话框头部
+		// 渲染头部
 		renderHeader() {
 			return this.hiddenHeader ? null : (
 				<div
@@ -264,22 +285,22 @@ export default {
 							}
 						}
 					}}>
-					{/* Title */}
+					{/* 标题 */}
 					<span class="cl-dialog__title">{this.title}</span>
-					{/* Controls */}
+					{/* 控制按钮 */}
 					<div class="cl-dialog__controls">
 						{this.hiddenControls
 							? null
 							: this.controls.map((vnode) => {
 								// Fullscreen
 								if (vnode === "fullscreen") {
-									// Hidden fullscreen btn
+									// 隐藏全屏按钮
 									if (this.screen === "xs") {
 										return null;
 									}
 
-									// Show diff icon
-									if (this.props.fullscreen) {
+									// 全屏切换按钮
+									if (this.fullscreen) {
 										return (
 											<button
 												type="button"
@@ -303,7 +324,7 @@ export default {
 										);
 									}
 								}
-								// Close
+								// 关闭按钮
 								else if (vnode === "close") {
 									return (
 										<button
@@ -314,7 +335,7 @@ export default {
 										</button>
 									);
 								}
-								// Custom node render
+								// 自定义渲染
 								else {
 									return renderNode(vnode, {
 										$scopedSlots: this.$scopedSlots
@@ -334,7 +355,7 @@ export default {
 					props: {
 						width: this.width,
 						...this.props,
-						fullscreen: this.isMobile ? true : this.props.fullscreen,
+						fullscreen: this.isFullscreen,
 						visible: this.visible,
 						"show-close": false,
 						customClass: `cl-dialog ${this.props.customClass || ""}`
@@ -348,10 +369,12 @@ export default {
 				}}>
 				{/* Header */}
 				<template slot="title">{this.renderHeader()}</template>
+
 				{/* Container */}
-				<div class="cl-dialog__container" key={this.cacheKey} style={{ height: this.height }}>
+				<div class="cl-dialog__container" key={this.cacheKey} style={{ height: this._height }}>
 					{this.$slots.default}
 				</div>
+
 				{/* Footer */}
 				{this.$slots.footer && (
 					<div class="cl-dialog__footer" slot="footer">

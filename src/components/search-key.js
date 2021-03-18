@@ -1,7 +1,10 @@
 export default {
 	name: "cl-search-key",
+
 	componentName: "ClSearchKey",
+
 	inject: ["crud"],
+
 	props: {
 		// 绑定值
 		value: [String, Number],
@@ -28,12 +31,14 @@ export default {
 		// 搜索时钩子
 		onSearch: Function
 	},
+
 	data() {
 		return {
 			field2: null,
 			value2: ""
 		};
 	},
+
 	watch: {
 		field: {
 			immediate: true,
@@ -49,6 +54,7 @@ export default {
 			}
 		}
 	},
+
 	computed: {
 		selectList() {
 			return this.fieldList.map((e, i) => {
@@ -56,6 +62,7 @@ export default {
 			});
 		}
 	},
+
 	methods: {
 		onKeyup({ keyCode }) {
 			if (keyCode === 13) {
@@ -98,6 +105,7 @@ export default {
 			this.value2 = "";
 		}
 	},
+
 	render() {
 		return (
 			<div class="cl-search-key">

@@ -171,37 +171,41 @@ export default {
 			this.clearValidate();
 		},
 
-		submit() {
+		submit(callback) {
 			// 验证表单
 			this.$refs["form"].validate(async (valid) => {
 				if (valid) {
 					this.saving = true;
 
+					// 响应方法
+					const res = {
+						done: this.done,
+						close: this.close,
+						$refs: __inst.$refs
+					}
+
+					// 表单数据
+					const d = cloneDeep(this.form);
+
+					// 过滤被隐藏的数据
+					this.conf.items.forEach((e) => {
+						if (e._hidden) {
+							delete d[e.prop];
+						}
+
+						if (e.hook) {
+							d[e.prop] = valueHook.submit(d[e.prop], e.hook, d);
+						}
+					});
+
 					// 提交钩子
-					const { submit } = this.conf.on;
+					const submit = callback || this.conf.on.submit;
 
 					// 提交事件
 					if (isFunction(submit)) {
-						let d = cloneDeep(this.form);
-
-						// 过滤被隐藏的数据
-						this.conf.items.forEach((e) => {
-							if (e._hidden) {
-								delete d[e.prop];
-							}
-
-							if (e.hook) {
-								d[e.prop] = valueHook.submit(d[e.prop], e.hook, d);
-							}
-						});
-
-						submit(d, {
-							done: this.done,
-							close: this.close,
-							$refs: __inst.$refs
-						});
+						submit(d, res);
 					} else {
-						console.error("Submit is not found");
+						console.error("Not found callback function");
 					}
 				}
 			});

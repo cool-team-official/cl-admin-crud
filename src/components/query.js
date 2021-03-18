@@ -1,7 +1,10 @@
 export default {
 	name: "cl-query",
+
 	componentName: "ClQuery",
+
 	inject: ["crud"],
+
 	props: {
 		value: null,
 		multiple: Boolean,

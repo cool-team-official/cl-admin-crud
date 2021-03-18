@@ -1,10 +1,14 @@
 export default {
 	name: "cl-multi-delete-btn",
+
 	componentName: "ClMultiDeleteBtn",
+
 	inject: ["crud"],
+
 	props: {
 		props: Object
 	},
+
 	render() {
 		const { getPermission, dict, style, selection, deleteMulti } = this.crud;
 

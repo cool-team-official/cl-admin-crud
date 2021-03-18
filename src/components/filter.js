@@ -1,9 +1,12 @@
 export default {
 	name: "cl-filter",
+
 	componentName: "ClFilter",
+
 	props: {
 		label: String
 	},
+
 	render() {
 		return (
 			<div class="cl-filter">
