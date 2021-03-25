@@ -26,6 +26,7 @@
 
 ## 版本
 
+-   1.6.5 解决 cl-table context-menu 参数异常
 -   1.6.3 解决 cl-dialog 设置 props 参数导致全屏无效问题
 -   1.6.0 添加 cl-filter-group, 抽离 cl-form 组件
 -   1.5.0 添加全局样式配置

@@ -36,7 +36,10 @@ export default {
 			default: true
 		},
 		// 开启右键菜单
-		contextMenu: [Boolean, Array]
+		contextMenu: {
+			type: [Boolean, Array],
+			default: undefined
+		}
 	},
 
 	data() {
@@ -402,8 +405,10 @@ export default {
 			const { refresh, rowEdit, rowDelete, getPermission, selection, table = {} } = this.crud;
 
 			// 配置
-			let cm =
-				this.contextMenu || (isEmpty(this.contextMenu) ? false : table["context-menu"]);
+			const cm =
+				isEmpty(this.contextMenu) && !isArray(this.contextMenu)
+					? table["context-menu"]
+					: this.contextMenu;
 
 			let buttons = ["refresh", "check", "edit", "delete", "order-asc", "order-desc"];
 			let enable = false;

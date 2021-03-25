@@ -63,7 +63,7 @@ export default {
 
 	watch: {
 		"props.fullscreen"(v) {
-			this.fullscreen = v
+			this.fullscreen = v;
 		},
 
 		isFullscreen(v) {
@@ -100,16 +100,16 @@ export default {
 					}, 300);
 				}
 			}
-		},
+		}
 	},
 
 	computed: {
 		isFullscreen() {
-			return this.isMobile ? true : this.fullscreen
+			return this.isMobile ? true : this.fullscreen;
 		},
 
 		_height() {
-			return this.height ? (this.isFullscreen ? `calc(100vh - 46px)` : this.height) : null
+			return this.height ? (this.isFullscreen ? `calc(100vh - 46px)` : this.height) : null;
 		}
 	},
 
@@ -147,7 +147,7 @@ export default {
 
 		// 改变全屏状态
 		changeFullscreen(v) {
-			this.props.fullscreen = (this.fullscreen = isBoolean(v) ? v : !this.fullscreen)
+			this.props.fullscreen = this.fullscreen = isBoolean(v) ? v : !this.fullscreen;
 		},
 
 		// 拖动事件
@@ -292,56 +292,56 @@ export default {
 						{this.hiddenControls
 							? null
 							: this.controls.map((vnode) => {
-								// Fullscreen
-								if (vnode === "fullscreen") {
-									// 隐藏全屏按钮
-									if (this.screen === "xs") {
-										return null;
-									}
+									// Fullscreen
+									if (vnode === "fullscreen") {
+										// 隐藏全屏按钮
+										if (this.screen === "xs") {
+											return null;
+										}
 
-									// 全屏切换按钮
-									if (this.fullscreen) {
+										// 全屏切换按钮
+										if (this.fullscreen) {
+											return (
+												<button
+													type="button"
+													class="minimize"
+													on-click={() => {
+														this.changeFullscreen(false);
+													}}>
+													<i class="el-icon-minus" />
+												</button>
+											);
+										} else {
+											return (
+												<button
+													type="button"
+													class="maximize"
+													on-click={() => {
+														this.changeFullscreen(true);
+													}}>
+													<i class="el-icon-full-screen" />
+												</button>
+											);
+										}
+									}
+									// 关闭按钮
+									else if (vnode === "close") {
 										return (
 											<button
 												type="button"
-												class="minimize"
-												on-click={() => {
-													this.changeFullscreen(false);
-												}}>
-												<i class="el-icon-minus" />
-											</button>
-										);
-									} else {
-										return (
-											<button
-												type="button"
-												class="maximize"
-												on-click={() => {
-													this.changeFullscreen(true);
-												}}>
-												<i class="el-icon-full-screen" />
+												class="close"
+												on-click={this.beforeClose}>
+												<i class="el-icon-close" />
 											</button>
 										);
 									}
-								}
-								// 关闭按钮
-								else if (vnode === "close") {
-									return (
-										<button
-											type="button"
-											class="close"
-											on-click={this.beforeClose}>
-											<i class="el-icon-close" />
-										</button>
-									);
-								}
-								// 自定义渲染
-								else {
-									return renderNode(vnode, {
-										$scopedSlots: this.$scopedSlots
-									});
-								}
-							})}
+									// 自定义渲染
+									else {
+										return renderNode(vnode, {
+											$scopedSlots: this.$scopedSlots
+										});
+									}
+							  })}
 					</div>
 				</div>
 			);
@@ -371,7 +371,10 @@ export default {
 				<template slot="title">{this.renderHeader()}</template>
 
 				{/* Container */}
-				<div class="cl-dialog__container" key={this.cacheKey} style={{ height: this._height }}>
+				<div
+					class="cl-dialog__container"
+					key={this.cacheKey}
+					style={{ height: this._height }}>
 					{this.$slots.default}
 				</div>
 
