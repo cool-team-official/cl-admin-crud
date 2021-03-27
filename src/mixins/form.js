@@ -18,9 +18,9 @@ export default {
 				"clearValidate",
 				"validateField",
 				"validate"
-			]
+			];
 
-			const parent = getParent.call(this, this.bindComponentName)
+			const parent = getParent.call(this, this.bindComponentName);
 
 			apis.forEach((n) => {
 				parent[n] = this[n];
@@ -31,15 +31,18 @@ export default {
 	methods: {
 		// 设置值
 		_set({ prop, options, hidden, path }, data) {
-			let conf = null
+			let conf = null;
 
 			switch (this.$options._componentTag) {
-				case 'cl-adv-search':
-					conf = this
-					break
-				case 'cl-form':
-					conf = this.conf
-					break
+				case "cl-adv-search":
+					conf = this;
+					break;
+				case "cl-form":
+					conf = this.conf;
+					break;
+				default:
+					conf = this.conf;
+					break;
 			}
 
 			let p = path;
@@ -125,29 +128,29 @@ export default {
 
 		// 重置表单
 		resetFields() {
-			if (this.$refs['form']) {
-				this.$refs['form'].resetFields()
+			if (this.$refs["form"]) {
+				this.$refs["form"].resetFields();
 			}
 		},
 
 		// 清除表单验证
 		clearValidate(props) {
-			if (this.$refs['form']) {
-				return this.$refs['form'].clearValidate(props)
+			if (this.$refs["form"]) {
+				return this.$refs["form"].clearValidate(props);
 			}
 		},
 
 		// 验证表单字段
 		validateField(props, callback) {
-			if (this.$refs['form']) {
-				this.$refs['form'].validateField(props, callback)
+			if (this.$refs["form"]) {
+				this.$refs["form"].validateField(props, callback);
 			}
 		},
 
-		// 验证表单 
+		// 验证表单
 		validate(callback) {
-			if (this.$refs['form']) {
-				this.$refs['form'].validate(callback)
+			if (this.$refs["form"]) {
+				this.$refs["form"].validate(callback);
 			}
 		}
 	}

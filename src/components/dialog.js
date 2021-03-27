@@ -105,7 +105,7 @@ export default {
 
 	computed: {
 		isFullscreen() {
-			return this.isMobile ? true : this.fullscreen;
+			return this.isMini ? true : this.fullscreen;
 		},
 
 		_height() {

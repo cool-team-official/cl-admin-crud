@@ -146,7 +146,7 @@ export default {
 							visible: this.visible,
 							title: "高级搜索",
 							direction: "rtl",
-							size: this.isMobile ? '100%' : "500px",
+							size: this.isMini ? '100%' : "500px",
 							...this.props
 						},
 						on: {

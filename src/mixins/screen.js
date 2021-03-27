@@ -6,7 +6,7 @@ export default {
     },
 
     computed: {
-        isMobile() {
+        isMini() {
             return this.screen === 'xs'
         },
     },

@@ -258,7 +258,7 @@ export default {
 							label: "操作",
 							width: "160px",
 							align: "center",
-							fixed: this.isMobile ? null : "right",
+							fixed: this.isMini ? null : "right",
 							...item,
 							...style.tableOp
 						},

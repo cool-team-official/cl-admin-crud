@@ -228,7 +228,7 @@ export default {
 					ref="form"
 					{...{
 						props: {
-							"label-position": this.isMobile ? "top" : "",
+							"label-position": this.isMini ? "top" : "",
 							disabled: this.saving,
 							model: this.form,
 							...props
