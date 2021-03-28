@@ -156,8 +156,11 @@
 					:visible.sync="dialog.visible"
 					:controls="['slot-btn', 'cl-flex1', 'fullscreen', 'close']"
 					:props="dialog.props"
+					keep-alive
 				>
-					自定义对话框 - {{ dialog.props }}
+					<p>自定义对话框 - {{ dialog.props }}</p>
+
+					<cl-number></cl-number>
 
 					<template #slot-btn>
 						<button>
@@ -329,6 +332,12 @@
 							}
 						})
 					]);
+				}
+			});
+
+			Vue.component("cl-number", {
+				render(h) {
+					return h("span", parseInt(Math.random() * 100));
 				}
 			});
 

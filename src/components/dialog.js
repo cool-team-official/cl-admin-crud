@@ -20,6 +20,9 @@ export default {
 			type: String,
 			default: "50%"
 		},
+		// 是否缓存
+		keepAlive: Boolean,
+		// 是否拖动
 		drag: {
 			type: Boolean,
 			default: true
@@ -115,7 +118,10 @@ export default {
 
 	methods: {
 		open() {
-			this.cacheKey++;
+			if (!this.keepAlive) {
+				this.cacheKey++;
+			}
+
 			this.$emit("update:visible", true);
 			this.$emit("open");
 		},
