@@ -26,6 +26,7 @@
 
 ## 版本
 
+-   1.6.9 组件渲染添加 input 事件
 -   1.6.8 cl-dialog 添加 keep-alive
 -   1.6.5 解决 cl-table context-menu 参数异常
 -   1.6.3 解决 cl-dialog 设置 props 参数导致全屏无效问题
