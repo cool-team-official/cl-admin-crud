@@ -221,7 +221,7 @@ export default {
 
 		// 渲染表单
 		renderForm() {
-			const { props, items } = this.conf;
+			const { props, items, _data } = this.conf;
 
 			return (
 				<el-form
@@ -249,7 +249,10 @@ export default {
 							e._hidden = Parse("hidden", {
 								value: e.hidden,
 								scope: this.form,
-								data: this.conf._data
+								data: {
+									..._data,
+									isAdd: !_data.isEdit
+								}
 							});
 
 							// 是否分组显示

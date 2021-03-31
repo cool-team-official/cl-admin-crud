@@ -8,10 +8,6 @@ import { isString, isBoolean, isFunction } from "./index";
  * @param {*} value
  */
 export default function (method, { value, scope, data = {} }) {
-	if (data) {
-		data.isAdd = !data.isEdit;
-	}
-
 	if (method === "hidden") {
 		if (isBoolean(value)) {
 			return value;

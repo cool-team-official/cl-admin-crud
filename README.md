@@ -26,6 +26,7 @@
 
 ## 版本
 
+-   1.6.10 cl-table 添加 hidden 处理
 -   1.6.9 组件渲染添加 input 事件
 -   1.6.8 cl-dialog 添加 keep-alive
 -   1.6.5 解决 cl-table context-menu 参数异常

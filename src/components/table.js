@@ -2,6 +2,7 @@ import { renderNode } from "@/utils/vnode";
 import { isNull, isArray, isEmpty } from "@/utils";
 import { Emitter, Screen } from "@/mixins";
 import { isFunction } from "../utils";
+import Parse from "../utils/parse";
 
 export default {
 	name: "cl-table",
@@ -81,47 +82,61 @@ export default {
 		// 渲染列
 		renderColumn() {
 			return this.columns
-				.filter((e) => !e.hidden)
 				.map((item, index) => {
+					// 解析 hidden
+					item._hidden = Parse("hidden", {
+						value: item.hidden,
+						data: {
+							...item
+						}
+					})
+
+					if (item._hidden) {
+						return false
+					}
+
+					// 多级渲染
 					const deep = (item) => {
 						let params = {
 							props: item,
 							on: item.on
 						};
 
-						// If op
+						// 操作列
 						if (item.type === "op") {
 							return this.renderOp(item);
 						}
 
-						// Default
+						// 数据列
 						if (!item.type || item.type === "expand") {
 							params.scopedSlots = {
 								default: (scope) => {
-									// Column-slot
-									let slot = this.$scopedSlots[`column-${item.prop}`];
+									// 自定义插槽渲染
+									const slot = this.$scopedSlots[`column-${item.prop}`];
 
-									let newScope = {
+									// 数据
+									const newScope = {
 										...scope,
 										...item
 									};
 
-									let value = scope.row[item.prop];
+									// 绑定值
+									const value = scope.row[item.prop];
 
 									if (slot) {
-										// Use slot
+										// 使用插槽
 										return slot({
 											scope: newScope
 										});
 									} else {
-										// If component
+										// 使用组件渲染
 										if (item.component) {
 											return renderNode(item.component, {
 												prop: item.prop,
 												scope: newScope.row
 											});
 										}
-										// Formatter
+										// 数据格式化
 										else if (item.formatter) {
 											return item.formatter(
 												newScope.row,
@@ -130,12 +145,11 @@ export default {
 												newScope.$index
 											);
 										}
-										// Dict tag
+										// 匹配字典
 										else if (item.dict) {
 											let data = item.dict.find((d) => d.value == value);
 
 											if (data) {
-												// Use el-tag
 												return (
 													<el-tag
 														{...{
@@ -153,11 +167,11 @@ export default {
 												return value;
 											}
 										}
-										// Empty text
+										// 空数据显示
 										else if (isNull(value)) {
 											return scope.emptyText;
 										}
-										// Value
+										// 默认值
 										else {
 											return value;
 										}
@@ -177,7 +191,7 @@ export default {
 							};
 						}
 
-						// Children element
+						// 多级
 						const childrenEl = item.children ? item.children.map(deep) : null;
 
 						return (
@@ -191,7 +205,8 @@ export default {
 					};
 
 					return deep(item);
-				});
+				})
+				.filter(Boolean)
 		},
 
 		// 渲染操作列
