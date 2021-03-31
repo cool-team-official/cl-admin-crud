@@ -26,6 +26,7 @@
 
 ## 版本
 
+-   1.6.11 cl-crud 添加组件别名
 -   1.6.10 cl-table 添加 hidden 处理
 -   1.6.9 组件渲染添加 input 事件
 -   1.6.8 cl-dialog 添加 keep-alive
