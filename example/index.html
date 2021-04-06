@@ -802,19 +802,24 @@
 							},
 							items: [
 								{
-									props: {
-										"label-width": "0px"
-									},
-									component: ({ h }) => {
-										return h(
-											"el-divider",
-											{
-												props: {
-													"content-position": "left"
-												}
-											},
-											"测试数据通道"
-										);
+									prop: "jsx",
+									label: "jsx",
+									value: "Hello",
+									component: {
+										name: "jsx",
+
+										props: {
+											value: String,
+											scope: null
+										},
+
+										mounted() {
+											console.log(this.scope);
+										},
+
+										render(h) {
+											return h("span", this.value);
+										}
 									}
 								},
 								{

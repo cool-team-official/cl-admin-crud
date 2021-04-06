@@ -6,8 +6,6 @@ export default {
     },
 
     render() {
-        return () => {
-            return <el-alert title={this.title} type="error"></el-alert>;
-        };
+        return <el-alert title={this.title} type="error"></el-alert>;
     }
 };

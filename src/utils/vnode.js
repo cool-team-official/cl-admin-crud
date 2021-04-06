@@ -63,12 +63,20 @@ const parse_jsx = (vnode, options = {}) => {
 			data.on = {};
 		}
 
+		if (!data.props) {
+			data.props = {};
+		}
+
+		// 添加作用域
+		data.props.scope = scope
+
 		// 输入事件
 		const onInput = data.on.input
 
-		// Set default value
+		// 设置默认值
 		data.attrs.value = scope[prop];
-		// Add input event
+
+		// 监听输入事件
 		data.on.input = (val) => {
 			__inst.$set(scope, prop, val);
 

@@ -157,7 +157,11 @@ export default {
 						}
 					}}>
 					<div class="cl-adv-search__container">
-						<cl-form v-model={this.form} ref="form" inner bind-component-name="ClAdvSearch"></cl-form>
+						<cl-form v-model={this.form} ref="form" inner bind-component-name="ClAdvSearch" {...{
+							scopedSlots: {
+								...this.$scopedSlots
+							}
+						}}></cl-form>
 					</div>
 
 					<div class="cl-adv-search__footer">
