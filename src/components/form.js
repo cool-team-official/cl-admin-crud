@@ -115,7 +115,11 @@ export default {
 					this.$set(
 						this.form,
 						e.prop,
-						valueHook.bind(isEmpty(this.form[e.prop]) ? cloneDeep(e.value) : this.form[e.prop], e.hook, this.form)
+						valueHook.bind(
+							isEmpty(this.form[e.prop]) ? cloneDeep(e.value) : this.form[e.prop],
+							e.hook,
+							this.form
+						)
 					);
 				}
 			});
@@ -133,12 +137,12 @@ export default {
 				});
 			}
 
-			return this
+			return this;
 		},
 
 		open(options) {
 			this.visible = true;
-			return this.create(options)
+			return this.create(options);
 		},
 
 		beforeClose() {
@@ -173,7 +177,7 @@ export default {
 
 		submit(callback) {
 			// 验证表单
-			this.$refs["form"].validate(async (valid) => {
+			this.$refs["form"].validate(async (valid, error) => {
 				if (valid) {
 					this.saving = true;
 
@@ -182,7 +186,7 @@ export default {
 						done: this.done,
 						close: this.close,
 						$refs: __inst.$refs
-					}
+					};
 
 					// 表单数据
 					const d = cloneDeep(this.form);
@@ -206,6 +210,17 @@ export default {
 						submit(d, res);
 					} else {
 						console.error("Not found callback function");
+					}
+				} else {
+					// 判断是否使用form-tabs，切换到对应的选项卡
+					const keys = Object.keys(error);
+
+					if (this.tabActive) {
+						const item = this.conf.items.find((e) => e.prop === keys[0]);
+
+						if (item) {
+							this.tabActive = item.group;
+						}
 					}
 				}
 			});
@@ -275,7 +290,6 @@ export default {
 							}
 
 							return (
-								e._group &&
 								!e._hidden && (
 									<el-col
 										key={`form-item-${i}`}
@@ -288,6 +302,7 @@ export default {
 										}}>
 										{e.component && (
 											<el-form-item
+												v-show={e._group}
 												{...{
 													props: {
 														label: e._label.text,
@@ -385,63 +400,63 @@ export default {
 			return hidden
 				? null
 				: buttons.map((vnode) => {
-					if (vnode == "save") {
-						return (
-							<el-button
-								{...{
-									props: {
-										size,
-										type: "success",
-										disabled: this.loading,
-										loading: this.saving,
-										...style.saveBtn
-									},
-									on: {
-										click: () => {
-											this.submit();
+						if (vnode == "save") {
+							return (
+								<el-button
+									{...{
+										props: {
+											size,
+											type: "success",
+											disabled: this.loading,
+											loading: this.saving,
+											...style.saveBtn
+										},
+										on: {
+											click: () => {
+												this.submit();
+											}
 										}
-									}
-								}}>
-								{saveButtonText}
-							</el-button>
-						);
-					} else if (vnode == "close") {
-						return (
-							<el-button
-								{...{
-									props: {
-										size,
-										...style.closeBtn
-									},
-									on: {
-										click: () => {
-											this.beforeClose();
+									}}>
+									{saveButtonText}
+								</el-button>
+							);
+						} else if (vnode == "close") {
+							return (
+								<el-button
+									{...{
+										props: {
+											size,
+											...style.closeBtn
+										},
+										on: {
+											click: () => {
+												this.beforeClose();
+											}
 										}
-									}
-								}}>
-								{closeButtonText}
-							</el-button>
-						);
-					} else {
-						return renderNode(vnode, {
-							scope: this.form,
-							$scopedSlots: this.$scopedSlots
-						});
-					}
-				});
+									}}>
+									{closeButtonText}
+								</el-button>
+							);
+						} else {
+							return renderNode(vnode, {
+								scope: this.form,
+								$scopedSlots: this.$scopedSlots
+							});
+						}
+				  });
 		}
 	},
 
 	render() {
-		const Form = <div class="cl-form">
-			<div class="cl-form__container">{this.renderForm()}</div>
-			<div class="cl-form__footer" >
-				{this.renderOp()}
+		const Form = (
+			<div class="cl-form">
+				<div class="cl-form__container">{this.renderForm()}</div>
+				<div class="cl-form__footer">{this.renderOp()}</div>
 			</div>
-		</div>
+		);
 
 		if (this.inner) {
-			return Form
+			return Form;
 		} else {
 			const { title, width, dialog } = this.conf;
 
@@ -466,7 +481,7 @@ export default {
 					}}>
 					{Form}
 				</cl-dialog>
-			)
+			);
 		}
 	}
 };

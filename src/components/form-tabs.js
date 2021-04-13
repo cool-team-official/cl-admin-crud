@@ -15,7 +15,7 @@ export default {
 		},
 		color: {
 			type: String,
-			default: '#409EFF'
+			default: "#409EFF"
 		}
 	},
 
@@ -24,10 +24,18 @@ export default {
 			active: null,
 			list: [],
 			line: {
-				width: '',
-				offsetLeft: ''
+				width: "",
+				offsetLeft: ""
 			}
 		};
+	},
+
+	watch: {
+		value: {
+			handler(val) {
+				this.update(val)
+			}
+		}
 	},
 
 	mounted() {
@@ -38,28 +46,31 @@ export default {
 	},
 
 	methods: {
-		update(val,) {
+		update(val) {
 			this.$nextTick(() => {
-				let index = this.list.findIndex(e => e.value === val)
-				let item = this.$refs[`tab-${index}`]
+				let index = this.list.findIndex((e) => e.value === val);
+				let item = this.$refs[`tab-${index}`];
 
-				// 下划线位置
-				this.line = {
-					width: item.clientWidth + 'px',
-					transform: `translateX(${item.offsetLeft}px)`,
-					'background-color': this.color
+				if (item) {
+					// 下划线位置
+					this.line = {
+						width: item.clientWidth + "px",
+						transform: `translateX(${item.offsetLeft}px)`,
+						"background-color": this.color
+					};
+
+					// 靠左位置
+					let left =
+						item.offsetLeft + (item.clientWidth - document.body.clientWidth) / 2 + 15;
+
+					if (left < 0) {
+						left = 0;
+					}
+
+					// 设置滚动距离
+					this.$refs.tabs.scrollLeft = left;
 				}
-
-				// 靠左位置
-				let left = item.offsetLeft + (item.clientWidth - document.body.clientWidth) / 2 + 15;
-
-				if (left < 0) {
-					left = 0;
-				}
-
-				// 设置滚动距离
-				this.$refs.tabs.scrollLeft = left
-			})
+			});
 
 			this.active = val;
 
@@ -67,7 +78,7 @@ export default {
 			this.$emit("change", val);
 		}
 	},
-	
+
 	render() {
 		return (
 			<div class="cl-form-tabs">
@@ -77,11 +88,9 @@ export default {
 							<li
 								ref={`tab-${i}`}
 								class={{ "is-active": e.value === this.active }}
-								style={
-									{
-										color: e.value === this.active ? this.color : '#444'
-									}
-								}
+								style={{
+									color: e.value === this.active ? this.color : "#444"
+								}}
 								onclick={() => {
 									this.update(e.value);
 								}}>
