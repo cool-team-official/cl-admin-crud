@@ -1,6 +1,6 @@
 {
 	"name": "cl-admin-crud",
-	"version": "1.6.14",
+	"version": "1.6.15",
 	"main": "/dist/cl-admin-crud.min.js",
 	"license": "MIT",
 	"scripts": {
@@ -37,6 +37,10 @@
 		"hook",
 		"form",
 		"table"
+	],
+	"files": [
+		"dist",
+		"example"
 	],
 	"homepage": "https://github.com/cool-team-official/cl-admin-crud"
 }
