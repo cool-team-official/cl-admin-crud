@@ -106,10 +106,6 @@
 
 				<!-- 编辑、新增 -->
 				<cl-upsert ref="upsert" v-model="form" v-bind="upsert.props" v-on="upsert.on">
-					<template #slot-val="{scope}">
-						<el-input v-model="scope.val"></el-input>
-						<el-input v-model="scope.val2"></el-input>
-					</template>
 				</cl-upsert>
 
 				<!-- 自定义表单 -->
@@ -347,7 +343,7 @@
 						},
 						form: {
 							status: "",
-							val2: ''
+							val2: ""
 						},
 						table: {
 							on: {
@@ -471,6 +467,9 @@
 							props: {
 								onOpen: (isEdit, data, { done, submit, close }) => {
 									console.log("cl-upsert 打开钩子", isEdit, data);
+									this.$refs["upsert"].setProps("props", {
+										disabled: isEdit
+									});
 								},
 
 								onClose(done) {
@@ -501,10 +500,14 @@
 
 								items: [
 									{
-										label: 'val',
-										prop: 'val',
+										label: "设置 props",
+										prop: "props",
 										component: {
-											name: 'slot-val'
+											name: "el-input",
+											props: {
+												disabled: false,
+												clearable: true
+											}
 										}
 									},
 									{

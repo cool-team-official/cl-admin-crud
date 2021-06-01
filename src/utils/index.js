@@ -64,7 +64,7 @@ export function getParent(name) {
 	return null;
 }
 
-export function dataset(obj, key, value) {
+export function dataset(obj, key, value, isMerge) {
 	const isGet = value === undefined;
 	let d = obj;
 
@@ -101,7 +101,11 @@ export function dataset(obj, key, value) {
 				if (isGet) {
 					return d[n];
 				} else {
-					__inst.$set(d, n, value);
+					if (isMerge) {
+						Object.assign(d[n], value);
+					} else {
+						__inst.$set(d, n, value);
+					}
 				}
 			}
 		}

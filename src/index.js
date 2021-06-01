@@ -62,6 +62,6 @@ export const CRUD = {
 export { Form, ContextMenu };
 
 export default {
-	version: "1.6.16",
+	version: "1.7.0",
 	install
 };

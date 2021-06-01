@@ -9,6 +9,7 @@ export default {
 				"setForm",
 				"setData",
 				"setOptions",
+				"setProps",
 				"toggleItem",
 				"hiddenItem",
 				"showItem",
@@ -30,7 +31,7 @@ export default {
 
 	methods: {
 		// 设置值
-		_set({ prop, options, hidden, path }, data) {
+		_set({ prop, options, hidden, path, props, isMerge }, data) {
 			let conf = null;
 
 			switch (this.$options._componentTag) {
@@ -55,11 +56,26 @@ export default {
 				p += `.component.options`;
 			}
 
+			if (props) {
+				p += `.component.props`;
+			}
+
 			if (hidden) {
 				p += ".hidden";
 			}
 
-			return dataset(conf, p, data);
+			return dataset(conf, p, data, isMerge);
+		},
+
+		// 合并值
+		_merge(options, data) {
+			this._set(
+				{
+					...options,
+					isMerge: true
+				},
+				data
+			);
 		},
 
 		// 获取表单值
@@ -81,6 +97,11 @@ export default {
 		// 设置组件选项
 		setOptions(prop, value) {
 			this._set({ options: true, prop }, value);
+		},
+
+		// 设置组件参数
+		setProps(prop, value) {
+			this._merge({ path: `items[prop:${prop}].component.props` }, value);
 		},
 
 		// 切换表单项的隐藏、显示
