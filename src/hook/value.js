@@ -8,7 +8,7 @@ export const format = {
 		return isArray(value) ? value.map(String) : String(value);
 	},
 	split(value, separator = ",") {
-		return value.split(separator);
+		return (value || "").split(separator);
 	},
 	join(value, separator = ",") {
 		return value.join(separator);
