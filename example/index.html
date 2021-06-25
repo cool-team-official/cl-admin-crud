@@ -234,13 +234,17 @@
 						}
 					});
 
-					return Promise.resolve({
-						list,
-						pagination: {
-							page: p.page,
-							size: p.size,
-							total
-						}
+					return new Promise((resolve, reject) => {
+						setTimeout(() => {
+							resolve({
+								list,
+								pagination: {
+									page: p.page,
+									size: p.size,
+									total
+								}
+							});
+						}, 3000);
 					});
 				},
 				info: (d) => {

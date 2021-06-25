@@ -8,7 +8,7 @@ let Form = null;
 let ContextMenu = null;
 
 const install = function (Vue, options = {}) {
-	const { crud = {}, alias = 'cl-crud' } = options;
+	const { crud = {}, alias = "cl-crud" } = options;
 
 	// 样式
 	if (!crud.style) crud.style = {};
@@ -20,7 +20,7 @@ const install = function (Vue, options = {}) {
 
 	// 注册组件
 	for (let i in components) {
-		Vue.component(i === 'Crud' ? alias : components[i].name, components[i]);
+		Vue.component(i === "Crud" ? alias : components[i].name, components[i]);
 	}
 
 	// 获取组件实例
@@ -62,6 +62,6 @@ export const CRUD = {
 export { Form, ContextMenu };
 
 export default {
-	version: "1.7.0",
+	version: "1.7.1",
 	install
 };
