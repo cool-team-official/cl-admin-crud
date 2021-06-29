@@ -228,10 +228,13 @@ export default {
 
 		// 重新绑定表单数据
 		reBindForm(data) {
-			for (const i in data) {
-				const d = this.conf.items.find((e) => e.prop === i);
-				this.form[i] = d ? valueHook.bind(data[i], d.hook, this.form) : data[i];
-			}
+			const d = {};
+
+			conf.items.forEach((e) => {
+				d[e.prop] = e.hook ? valueHook.bind(data[e.prop], e.hook, data) : data[e.prop];
+			});
+
+			Object.assign(form, data, d);
 		},
 
 		// 渲染表单
@@ -349,8 +352,8 @@ export default {
 																		{renderNode(e[name], {
 																			prop: e.prop,
 																			scope: this.form,
-																			$scopedSlots: this
-																				.$scopedSlots
+																			$scopedSlots:
+																				this.$scopedSlots
 																		})}
 																	</div>
 																)

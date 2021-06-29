@@ -353,6 +353,9 @@
 							on: {
 								"row-click": (row) => {
 									console.log("行点击", row);
+								},
+								"sort-change": ({ order, prop }) => {
+									console.log(order, prop);
 								}
 							},
 

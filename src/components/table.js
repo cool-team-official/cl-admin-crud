@@ -40,6 +40,11 @@ export default {
 		contextMenu: {
 			type: [Boolean, Array],
 			default: undefined
+		},
+		// 排序刷新
+		sortRefresh: {
+			type: Boolean,
+			default: true
 		}
 	},
 
@@ -89,10 +94,10 @@ export default {
 						data: {
 							...item
 						}
-					})
+					});
 
 					if (item._hidden) {
-						return false
+						return false;
 					}
 
 					// 多级渲染
@@ -206,7 +211,7 @@ export default {
 
 					return deep(item);
 				})
-				.filter(Boolean)
+				.filter(Boolean);
 		},
 
 		// 渲染操作列
@@ -388,25 +393,29 @@ export default {
 
 		// 监听排序
 		onSortChange({ prop, order }) {
-			if (order === "descending") {
-				order = "desc";
+			if (this.sortRefresh) {
+				if (order === "descending") {
+					order = "desc";
+				}
+
+				if (order === "ascending") {
+					order = "asc";
+				}
+
+				if (!order) {
+					prop = null;
+				}
+
+				if (this.crud.test.sortLock) {
+					this.crud.refresh({
+						prop,
+						order,
+						page: 1
+					});
+				}
 			}
 
-			if (order === "ascending") {
-				order = "asc";
-			}
-
-			if (!order) {
-				prop = null;
-			}
-
-			if (this.crud.test.sortLock) {
-				this.crud.refresh({
-					prop,
-					order,
-					page: 1
-				});
-			}
+			this.$emit("sort-change", { prop, order });
 		},
 
 		// 监听表格选择

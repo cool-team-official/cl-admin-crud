@@ -7,17 +7,34 @@ export const format = {
 	string(value) {
 		return isArray(value) ? value.map(String) : String(value);
 	},
-	split(value, separator = ",") {
-		return (value || "").split(separator);
+	split(value) {
+		return isString(value) ? value.split(",").filter(Boolean) : value;
 	},
-	join(value, separator = ",") {
-		return value.join(separator);
+	join(value) {
+		return isArray(value) ? value.join(",") : value;
 	},
 	boolean(value) {
 		return Boolean(value);
 	},
 	booleanNumber(value) {
 		return Boolean(value) ? 1 : 0;
+	},
+	datetimerange(value, form, method) {
+		if (method == "bind") {
+			return [form.startTime, form.endTime];
+		} else {
+			const [startTime, endTime] = value || [];
+			form.startTime = startTime;
+			form.endTime = endTime;
+			return undefined;
+		}
+	},
+	splitJoin(value, _, method) {
+		if (method == "bind") {
+			return isString(value) ? value.split(",").filter(Boolean) : value;
+		} else {
+			return isArray(value) ? value.join(",") : value;
+		}
 	}
 };
 
@@ -54,7 +71,7 @@ function parse(method, { value, pipe, form }) {
 
 	pipes.forEach((e) => {
 		if (isString(e)) {
-			d = format[e](d);
+			d = format[e](d, form, method);
 		} else if (isFunction(e)) {
 			d = e(d, form);
 		}
