@@ -13,6 +13,9 @@ const install = function (Vue, options = {}) {
 	// 样式
 	if (!crud.style) crud.style = {};
 
+	// 表格
+	if (!crud.table) crud.table = {};
+
 	// 缓存配置
 	store.__crud = crud;
 	store.__vue = Vue;
@@ -62,6 +65,6 @@ export const CRUD = {
 export { Form, ContextMenu };
 
 export default {
-	version: "1.7.2",
+	version: "1.8.0",
 	install
 };

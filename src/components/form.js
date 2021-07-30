@@ -230,11 +230,11 @@ export default {
 		reBindForm(data) {
 			const d = {};
 
-			conf.items.forEach((e) => {
+			this.conf.items.forEach((e) => {
 				d[e.prop] = e.hook ? valueHook.bind(data[e.prop], e.hook, data) : data[e.prop];
 			});
 
-			Object.assign(form, data, d);
+			Object.assign(this.form, data, d);
 		},
 
 		// 渲染表单

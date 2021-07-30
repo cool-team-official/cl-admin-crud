@@ -3,6 +3,7 @@ import { isNull, isArray, isEmpty } from "@/utils";
 import { Emitter, Screen } from "@/mixins";
 import { isFunction } from "../utils";
 import Parse from "../utils/parse";
+import { __crud } from "@/store";
 
 export default {
 	name: "cl-table",
@@ -203,6 +204,11 @@ export default {
 							<el-table-column
 								key={`crud-table-column-${index}`}
 								align="center"
+								index={(i) => {
+									return __crud.table.indexMethod
+										? __crud.table.indexMethod(i, this.crud)
+										: i + 1;
+								}}
 								{...params}>
 								{childrenEl}
 							</el-table-column>

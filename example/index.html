@@ -244,7 +244,7 @@
 									total
 								}
 							});
-						}, 3000);
+						}, 500);
 					});
 				},
 				info: (d) => {
@@ -307,6 +307,11 @@
 					// 		// width: "200px"
 					// 	}
 					// }
+					table: {
+						indexMethod: (index, crud) => {
+							return index + 1 + (crud.params.page - 1) * crud.params.size;
+						}
+					}
 				}
 			});
 
@@ -387,6 +392,11 @@
 								],
 
 								columns: [
+									{
+										type: "index",
+										align: "center",
+										width: 60
+									},
 									{
 										type: "selection",
 										align: "center",
@@ -1142,7 +1152,7 @@
 							})
 							.done();
 
-						app.refresh();
+						app.refresh({ size: 2 });
 					},
 
 					refresh(params) {
