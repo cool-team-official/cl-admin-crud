@@ -639,8 +639,9 @@
 						},
 						advSearch: {
 							on: {
-								open(data) {
+								open: (data) => {
 									console.log("adv-search 打开", data);
+									console.log(this.$refs["adv-search"]);
 								},
 								close() {
 									console.log("adv-search 关闭");
@@ -656,7 +657,7 @@
 								onOpen(data, { next }) {
 									console.log("adv-search 打开钩子", data);
 
-									next();
+									next(data);
 								},
 								onClose(done) {
 									console.log("adv-search 关闭钩子");
@@ -668,6 +669,17 @@
 								},
 								opList: ["search", "reset", "clear", "close"],
 								items: [
+									{
+										label: "xx",
+										prop: "date",
+										hook: "datetimerange",
+										component: {
+											name: "el-date-picker",
+											props: {
+												type: "datetimerange"
+											}
+										}
+									},
 									{
 										label: "昵称",
 										prop: "name",

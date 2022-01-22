@@ -1,6 +1,7 @@
 import { cloneDeep } from "@/utils";
 import { renderNode } from "@/utils/vnode";
 import { Emitter, Screen } from "@/mixins";
+import valueHook from "@/hook/value";
 
 export default {
 	name: "cl-adv-search",
@@ -40,7 +41,7 @@ export default {
 	data() {
 		return {
 			visible: false,
-			form: {},
+			form: {}
 		};
 	},
 
@@ -57,17 +58,27 @@ export default {
 				this.visible = true;
 
 				if (data) {
-					Object.assign(this.form, data)
+					Object.assign(this.form, data);
 				}
 
+				this.items.map((e) => {
+					if (e.hook) {
+						this.$set(
+							this.form,
+							e.prop,
+							valueHook.bind(this.form[e.prop], e.hook, this.form)
+						);
+					}
+				});
+
 				this.$nextTick(() => {
-					this.$refs['form'].create({
+					this.$refs["form"].create({
 						items: this.items,
 						op: {
 							hidden: true
 						}
-					})
-				})
+					});
+				});
 
 				this.$emit("open", this.form);
 			};
@@ -96,20 +107,26 @@ export default {
 
 		// 重置
 		reset() {
-			this.$refs['form'].resetFields()
+			this.$refs["form"].resetFields();
 			this.$emit("reset");
 		},
 
 		// 清空
 		clear() {
 			for (let i in this.form) {
-				this.form[i] = undefined
+				this.form[i] = undefined;
 			}
 			this.$emit("clear");
 		},
 
 		// 搜索
 		search() {
+			this.items.forEach((e) => {
+				if (e.hook) {
+					this.form[e.prop] = valueHook.submit(this.form[e.prop], e.hook, this.form);
+				}
+			});
+
 			const params = cloneDeep(this.form);
 
 			// 搜索事件
@@ -146,7 +163,7 @@ export default {
 							visible: this.visible,
 							title: "高级搜索",
 							direction: "rtl",
-							size: this.isMini ? '100%' : "500px",
+							size: this.isMini ? "100%" : "500px",
 							...this.props
 						},
 						on: {
@@ -157,11 +174,16 @@ export default {
 						}
 					}}>
 					<div class="cl-adv-search__container">
-						<cl-form v-model={this.form} ref="form" inner bind-component-name="ClAdvSearch" {...{
-							scopedSlots: {
-								...this.$scopedSlots
-							}
-						}}></cl-form>
+						<cl-form
+							v-model={this.form}
+							ref="form"
+							inner
+							bind-component-name="ClAdvSearch"
+							{...{
+								scopedSlots: {
+									...this.$scopedSlots
+								}
+							}}></cl-form>
 					</div>
 
 					<div class="cl-adv-search__footer">

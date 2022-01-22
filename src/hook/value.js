@@ -39,10 +39,6 @@ export const format = {
 };
 
 function parse(method, { value, pipe, form }) {
-	if (value === undefined) {
-		return value;
-	}
-
 	if (!pipe) {
 		return value;
 	}
